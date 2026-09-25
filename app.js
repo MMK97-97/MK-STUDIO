@@ -16,16 +16,16 @@ function toast(msg){
 window.MK97={store,toast,templates:T,bump(k){const a=store.get('mk97.analytics',{templatesUsed:0,exports:0,projects:0,aiActions:0,videoEdits:0});a[k]=(a[k]||0)+1;store.set('mk97.analytics',a)}};
 function nav(){
  const active=document.body.dataset.nav||'';
- const items=[['index.html','⌂','Home','home',''],['templates.html','▦','Templates','templates',''],['poster-editor.html','＋','Create','create','create'],['projects.html','▧','Projects','projects',''],['more.html','☷','More','more','']];
+ const items=[['index.html','⌂','Home','home',''],['templates.html','▦','Templates','templates',''],['poster-editor.html','＋','Create','create','create'],['projects.html','▧','Projects','projects',''],['analytics.html','📊','Analytics','analytics','']];
  return `<nav class="bottomnav">${items.map(([h,i,l,k,c])=>`<a href="${h}" class="navitem ${active===k?'active':''} ${c}"><span>${i}</span>${l}</a>`).join('')}</nav>`;
 }
 $$('[data-bottomnav]').forEach(x=>x.innerHTML=nav());
 function templateCard(t){
- return `<a class="template-card" href="template-detail.html?id=${encodeURIComponent(t.id)}">
-  <div class="template-art" style="--a:${t.palette[0]};--b:${t.palette[1]};--accent:${t.palette[2]}">
-   <span class="pro-badge">PRO</span>
-   <div class="template-copy"><span>${esc(t.kicker)}</span><h3 style="color:${t.titleColor||'#fff'};font-family:${esc(t.font||'Arial')}">${esc(t.title)}</h3><small>${esc(t.detail)}</small></div>
-  </div><div class="template-meta"><strong>${esc(t.name)}</strong><em>${esc(t.category)}</em></div></a>`;
+ return `<a class="template-box-card" href="template-detail.html?id=${encodeURIComponent(t.id)}">
+  <div class="template-box-art" style="--a:${t.palette[0]};--b:${t.palette[1]}">
+   <span class="template-crown">👑</span>
+   <div class="template-box-caption"><small>${esc(t.kicker)}</small><h4>${esc(t.title)}</h4></div>
+  </div><div class="template-box-meta"><strong>${esc(t.name)}</strong><span>${esc(t.category)}</span></div></a>`;
 }
 window.MK97.templateCard=templateCard;
 const trending=$('#trendingTemplates'); if(trending)trending.innerHTML=T.slice(0,8).map(templateCard).join('');

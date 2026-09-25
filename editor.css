@@ -1560,28 +1560,1146 @@ body.editor-page {
 
 .hidden { display: none !important; }
 
-/* Desktop Responsive Layout */
+/* ========================================================
+   CAPCUT DESKTOP 3-PANE LAYOUT & PRO STYLING
+======================================================== */
+.beat-marker {
+  position: absolute;
+  top: 14px;
+  width: 6px;
+  height: 6px;
+  background: #facc15;
+  border-radius: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 0 6px #facc15;
+  z-index: 15;
+  pointer-events: none;
+}
+
+.speed-curve-grid,
+.animation-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.speed-curve-card,
+.anim-card {
+  padding: 10px 8px;
+  border-radius: 10px;
+  background: #121721;
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s ease;
+}
+
+.speed-curve-card:hover,
+.speed-curve-card.active,
+.anim-card:hover,
+.anim-card.active {
+  border-color: var(--accent-cyan);
+  background: #182234;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+}
+
+.speed-curve-card strong,
+.anim-card strong {
+  display: block;
+  font-size: 9px;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.speed-curve-card small,
+.anim-card small {
+  display: block;
+  font-size: 7px;
+  color: #94a3b8;
+}
+
+/* CapCut Desktop 3-Pane Pro Interface */
 @media (min-width: 900px) {
   .editor-shell {
-    width: min(1380px, 100%);
-    margin: auto;
-    border-left: 1px solid var(--border-subtle);
-    border-right: 1px solid var(--border-subtle);
+    width: 100vw;
+    max-width: 100vw;
+    margin: 0;
+    border: 0;
   }
 
   .video-layout {
+    display: grid;
+    grid-template-rows: 1fr 220px;
+    height: calc(100dvh - var(--top));
+    overflow: hidden;
+  }
+
+  .desktop-top-row {
+    display: grid;
+    grid-template-columns: 310px 1fr 310px;
+    height: 100%;
+    min-height: 0;
+    border-bottom: 1px solid var(--border-subtle);
+    background: #06080c;
+  }
+
+  /* Left Asset Drawer Docked */
+  .desktop-left-drawer {
+    display: flex;
     flex-direction: column;
+    border-right: 1px solid var(--border-subtle);
+    background: #090c12;
+    overflow: hidden;
   }
 
-  .bottom-sheet {
-    left: 50%;
-    right: auto;
-    width: min(780px, calc(100% - 24px));
-    transform: translate(-50%, 102%);
-    border-radius: 20px;
+  .desktop-drawer-head {
+    height: 42px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: 11px;
+    font-weight: 800;
   }
 
-  .bottom-sheet.open {
-    transform: translate(-50%, 0);
+  .desktop-drawer-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+  }
+
+  /* Center Player Monitor */
+  .video-preview-wrap {
+    height: 100%;
+    min-height: 0;
+    border: 0;
+  }
+
+  /* Right Inspector Docked */
+  .desktop-right-inspector {
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid var(--border-subtle);
+    background: #090c12;
+    overflow: hidden;
+  }
+
+  .desktop-inspector-head {
+    height: 42px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: 11px;
+    font-weight: 800;
+  }
+
+  .desktop-inspector-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+  }
+
+  /* Bottom Timeline Spans 100% Width */
+  .timeline-panel {
+    height: 220px;
+    min-height: 220px;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .video-bottom-tools {
+    display: none !important;
   }
 }
+
+@media (max-width: 899px) {
+  .desktop-left-drawer,
+  .desktop-right-inspector {
+    display: none !important;
+  }
+  .desktop-top-row {
+    display: contents;
+  }
+}
+
+/* ========================================================
+   POSTER STUDIO LUXURY INTERFACE (Image 5)
+======================================================== */
+.poster-action-bar {
+  height: 44px;
+  background: rgba(10, 13, 19, 0.96);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 10px;
+  z-index: 100;
+}
+
+.action-bar-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.action-bar-btn span {
+  font-size: 15px;
+}
+
+.action-bar-btn:hover,
+.action-bar-btn.active {
+  color: var(--gold-mid);
+}
+
+.poster-workspace {
+  position: relative;
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  background: 
+    radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.05) 0%, transparent 70%),
+    #05070a;
+}
+
+/* Left Vertical Rail (Image 5) */
+.poster-left-rail {
+  width: 54px;
+  background: rgba(8, 11, 16, 0.94);
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 0;
+  gap: 8px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  z-index: 50;
+}
+
+.poster-left-rail::-webkit-scrollbar {
+  display: none;
+}
+
+.rail-btn {
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  color: #94a3b8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-size: 7.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.rail-btn span {
+  font-size: 14px;
+}
+
+.rail-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.rail-btn.active {
+  background: rgba(245, 158, 11, 0.18);
+  border-color: var(--gold-primary);
+  color: var(--gold-mid);
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
+}
+
+/* Center Stage */
+.poster-stage-wrap {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 10px;
+}
+
+/* Right Floating Layer Panel (Image 5) */
+.floating-layer-panel {
+  position: absolute;
+  right: 12px;
+  top: 14px;
+  width: 140px;
+  max-height: calc(100% - 28px);
+  background: rgba(11, 15, 22, 0.88);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-gold);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+  z-index: 60;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+}
+
+.floating-layer-panel.collapsed {
+  transform: translateX(160px);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.layer-panel-head {
+  padding: 8px 10px;
+  font-size: 9px;
+  font-weight: 900;
+  color: var(--gold-mid);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.layer-panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  scrollbar-width: none;
+}
+
+.layer-panel-body::-webkit-scrollbar {
+  display: none;
+}
+
+.floating-layer-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(18, 24, 34, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 4px 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.floating-layer-row:hover {
+  background: rgba(28, 36, 50, 0.9);
+}
+
+.floating-layer-row.active {
+  border-color: var(--gold-primary);
+  background: rgba(245, 158, 11, 0.15);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.25);
+}
+
+.floating-layer-row .fl-eye {
+  font-size: 11px;
+  color: #94a3b8;
+  cursor: pointer;
+}
+
+.floating-layer-row .fl-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  background: #000;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+.floating-layer-row .fl-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.floating-layer-row .fl-name {
+  flex: 1;
+  font-size: 8px;
+  font-weight: 800;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.floating-layer-row .fl-more {
+  color: #64748b;
+  font-size: 11px;
+}
+
+.layer-panel-foot {
+  padding: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.add-layer-btn {
+  width: 100%;
+  height: 28px;
+  border-radius: 8px;
+  background: #141a24;
+  border: 1px dashed var(--border-gold);
+  color: var(--gold-mid);
+  font-size: 9px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.add-layer-btn:hover {
+  background: rgba(245, 158, 11, 0.15);
+}
+
+/* Bottom Editing Bar (Image 5) */
+.poster-bottom-dock {
+  background: rgba(8, 11, 16, 0.98);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+}
+
+.poster-tool-row {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.poster-tool-row::-webkit-scrollbar {
+  display: none;
+}
+
+.p-tool-btn {
+  min-width: 52px;
+  height: 44px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: #94a3b8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-size: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.p-tool-btn span {
+  font-size: 15px;
+}
+
+.p-tool-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.p-tool-btn.active {
+  border-color: var(--gold-primary);
+  background: rgba(245, 158, 11, 0.14);
+  color: var(--gold-mid);
+}
+
+/* Effects Sub-tray (Image 5) */
+.poster-effects-tray {
+  padding: 10px 12px 14px;
+  background: #090c12;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tray-category-tabs {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+
+.tray-category-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tray-cat-tab {
+  background: transparent;
+  border: none;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  cursor: pointer;
+  padding: 0 2px 4px;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.tray-cat-tab.active {
+  color: var(--gold-mid);
+  border-bottom-color: var(--gold-mid);
+}
+
+.tray-presets-scroll {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 4px;
+}
+
+.tray-presets-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.preset-card {
+  width: 64px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.preset-card .preset-thumb {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  background: #141a24;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  position: relative;
+  transition: all 0.15s ease;
+}
+
+.preset-card.active .preset-thumb {
+  border: 2px solid var(--gold-primary);
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.45);
+}
+
+.preset-card .preset-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.preset-card span {
+  font-size: 8px;
+  font-weight: 700;
+  color: #cbd5e1;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.preset-card.active span {
+  color: var(--gold-mid);
+  font-weight: 800;
+}
+
+/* ========================================================
+   VIDEO STUDIO PRO LUXURY INTERFACE (Images 6 & 9)
+======================================================== */
+
+/* 1. Top Tool Tabs Bar (Image 6 & 9) */
+.video-top-tabs-bar {
+  height: 48px;
+  background: rgba(10, 13, 19, 0.96);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 8px;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  z-index: 100;
+}
+
+.video-top-tabs-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.v-top-tab {
+  min-width: 42px;
+  height: 38px;
+  border-radius: 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: #94a3b8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-size: 7.5px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.v-top-tab span {
+  font-size: 14px;
+}
+
+.v-top-tab:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.v-top-tab.active {
+  background: rgba(245, 158, 11, 0.14);
+  border-color: var(--gold-primary);
+  color: var(--gold-mid);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+}
+
+/* 2. Video Preview Viewport with Corner Brackets & 4K badge */
+.video-preview-framed {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #020305;
+}
+
+.corner-bracket {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: var(--gold-primary);
+  border-style: solid;
+  pointer-events: none;
+  z-index: 25;
+}
+
+.corner-tl { top: 8px; left: 8px; border-width: 2px 0 0 2px; }
+.corner-tr { top: 8px; right: 8px; border-width: 2px 2px 0 0; }
+.corner-bl { bottom: 38px; left: 8px; border-width: 0 0 2px 2px; }
+.corner-br { bottom: 38px; right: 8px; border-width: 0 2px 2px 0; }
+
+.video-badge-4k {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: rgba(14, 18, 25, 0.85);
+  border: 1px solid var(--border-gold);
+  border-radius: 6px;
+  padding: 2px 6px;
+  font-size: 8px;
+  font-weight: 900;
+  color: var(--gold-mid);
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.video-inplayer-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 34px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.95), transparent);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  gap: 10px;
+  z-index: 30;
+}
+
+.inplayer-play-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.inplayer-time {
+  font-size: 9px;
+  font-weight: 800;
+  color: #cbd5e1;
+  letter-spacing: 0.05em;
+  font-variant-numeric: tabular-nums;
+}
+
+.inplayer-scrubber {
+  flex: 1;
+  position: relative;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.inplayer-scrubber-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 25%;
+  background: var(--gold-gradient);
+  border-radius: 999px;
+}
+
+.inplayer-scrubber-handle {
+  position: absolute;
+  top: 50%;
+  left: 25%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--gold-primary);
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.6);
+}
+
+.inplayer-fs-btn {
+  background: transparent;
+  border: none;
+  color: #cbd5e1;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* 3. Action Strip (Above Timeline) (Image 6 & 9) */
+.video-action-strip {
+  height: 44px;
+  background: #080b10;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 8px;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  z-index: 40;
+}
+
+.video-action-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.action-strip-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 7.5px;
+  font-weight: 700;
+  cursor: pointer;
+  min-width: 44px;
+  transition: color 0.15s ease;
+  white-space: nowrap;
+}
+
+.action-strip-btn span {
+  font-size: 14px;
+}
+
+.action-strip-btn:hover,
+.action-strip-btn.active {
+  color: var(--gold-mid);
+}
+
+/* 4. 5-Track Timeline Layout & Track Headers */
+.v2-tracks-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px 0;
+}
+
+.v2-track-row {
+  display: flex;
+  height: 48px;
+  background: rgba(14, 18, 25, 0.5);
+  border-radius: 8px;
+  overflow: visible;
+  position: relative;
+}
+
+.v2-track-header {
+  width: 72px;
+  flex-shrink: 0;
+  background: rgba(10, 13, 19, 0.96);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  z-index: 10;
+}
+
+.v2-track-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: #cbd5e1;
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.v2-track-title span {
+  font-size: 14px;
+}
+
+.v2-track-vis {
+  color: #64748b;
+  font-size: 11px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.v2-track-lane {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 8px;
+  overflow-x: visible;
+}
+
+/* Track 1: Filmstrip Clip */
+.clip-filmstrip-item {
+  height: 40px;
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.clip-filmstrip-item img {
+  height: 100%;
+  width: auto;
+  object-fit: cover;
+}
+
+.clip-filmstrip-item.active {
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+}
+
+.transition-diamond-btn {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  background: #182030;
+  border: 1px solid var(--border-gold);
+  color: var(--gold-mid);
+  display: grid;
+  place-items: center;
+  font-size: 9px;
+  cursor: pointer;
+  z-index: 5;
+  transform: rotate(45deg);
+  margin: 0 4px;
+}
+
+.transition-diamond-btn span {
+  transform: rotate(-45deg);
+}
+
+/* Track 2: Gold Text Capsule */
+.clip-gold-capsule {
+  height: 34px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(180, 83, 9, 0.4));
+  border: 1px solid var(--border-gold);
+  border-radius: 8px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  transition: all 0.15s ease;
+}
+
+.clip-gold-capsule.active {
+  border-color: #fff;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.6);
+}
+
+.clip-gold-capsule .cap-arrow {
+  color: var(--gold-mid);
+  font-size: 11px;
+}
+
+/* Track 3: Purple Effects Capsule */
+.clip-purple-capsule {
+  height: 34px;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.3), rgba(107, 33, 168, 0.5));
+  border: 1px solid rgba(168, 85, 247, 0.5);
+  border-radius: 8px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.clip-purple-capsule.active {
+  border-color: #fff;
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.6);
+}
+
+/* Track 4: Cyan Waveform Track */
+.clip-cyan-waveform {
+  height: 36px;
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.25), rgba(14, 116, 144, 0.4));
+  border: 1px solid rgba(6, 182, 212, 0.5);
+  border-radius: 8px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.clip-cyan-waveform.active {
+  border-color: #fff;
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.6);
+}
+
+.clip-wave-bars {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 20px;
+}
+
+.clip-wave-bars span {
+  width: 2px;
+  background: #22d3ee;
+  border-radius: 2px;
+}
+
+/* Track 5: Dark Overlay Card */
+.clip-dark-card {
+  height: 34px;
+  background: rgba(14, 18, 25, 0.9);
+  border: 1px solid var(--border-gold);
+  border-radius: 8px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.clip-dark-card.active {
+  border-color: #fff;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+}
+
+.track-add-btn-round {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #141a24;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--gold-mid);
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-left: 6px;
+}
+
+/* 5. Bottom Dock Strip (Horizontal tools) */
+.video-bottom-dock-strip {
+  height: 64px;
+  background: rgba(8, 11, 16, 0.98);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  z-index: 100;
+}
+
+.video-bottom-dock-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.dock-card-btn {
+  width: 54px;
+  height: 52px;
+  border-radius: 12px;
+  background: #10141d;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.dock-card-btn span {
+  font-size: 18px;
+}
+
+.dock-card-btn small {
+  font-size: 7px;
+  font-weight: 800;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+.dock-card-btn:hover {
+  background: #18202d;
+  color: #fff;
+}
+
+.dock-card-btn.active,
+.dock-card-btn.highlight {
+  border-color: var(--gold-primary);
+  background: rgba(245, 158, 11, 0.15);
+}
+
+.dock-card-btn.highlight small {
+  color: var(--gold-mid);
+}
+
+.dock-badge-ai {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  background: var(--gold-metallic);
+  color: #000;
+  font-size: 6px;
+  font-weight: 900;
+  padding: 1px 3px;
+  border-radius: 3px;
+}
+
+/* 6. Bottom Transport Bar (Huge Gold Circular Play Button) */
+.video-transport-bar-v2 {
+  height: 54px;
+  background: #05070a;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 12px;
+  z-index: 100;
+}
+
+.v2-trans-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 16px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.v2-trans-btn:hover {
+  color: #fff;
+}
+
+/* Huge Glowing Circular Play Button */
+.huge-gold-play-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--gold-metallic);
+  border: 2px solid #000;
+  color: #000;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 0 18px rgba(245, 158, 11, 0.6);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.huge-gold-play-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 24px rgba(245, 158, 11, 0.85);
+}
+

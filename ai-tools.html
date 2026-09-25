@@ -1,17 +1,505 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#05080c"><title>Smart Tools — MK97 Creative Studio</title><link rel="stylesheet" href="app.css?v=25"></head><body data-nav="more"><div class="page"><header class="topbar">
-<a class="brand" href="index.html"><span class="brand-logo"><img src="assets/MK97.png" alt="MK97"></span><span class="brand-copy"><b>MK97</b><small>CREATIVE STUDIO</small></span></a>
-<div class="page-title">Smart Tools<small>BROWSER-LOCAL CREATOR TOOLS</small></div>
-<div class="top-actions"><a class="icon-btn" href="more.html" aria-label="More">☷</a></div>
-</header><main class="shell main">
-<div class="split">
-<section>
-  <div class="tool-grid" style="grid-template-columns:repeat(2,minmax(0,1fr))">
-    <div class="tool-card"><span class="tool-ico">✂</span><b>Smart Cutout</b><small>Browser-local background separation for clean backgrounds.</small></div>
-    <div class="tool-card"><span class="tool-ico">✦</span><b>Style Match</b><small>Use your saved brand palette in the Poster Studio.</small></div>
-    <div class="tool-card"><span class="tool-ico">◫</span><b>Caption Assist</b><small>Prepare match details and copy blocks for templates.</small></div>
-    <div class="tool-card"><span class="tool-ico">↻</span><b>Background Replace</b><small>Use transparent cutouts over a new design background.</small></div>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#040507">
+  <title>AI Tools — MK97 Creative Studio</title>
+  <link rel="stylesheet" href="app.css?v=27">
+</head>
+<body data-nav="more">
+  <div class="page">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <a class="brand" href="index.html">
+        <span class="brand-logo"><img src="MK97.png" alt="MK97"></span>
+        <span class="brand-copy"><b>MK97</b><small>CREATIVE STUDIO</small></span>
+      </a>
+      <div class="top-actions">
+        <button class="icon-btn" title="Notifications" aria-label="Notifications">
+          <span style="font-size:16px">🔔</span>
+        </button>
+        <a class="avatar-badge" href="welcome.html" title="Creator Profile">
+          <img src="fwcwl-logo.jpeg" alt="Creator">
+        </a>
+      </div>
+    </header>
+
+    <main class="shell main">
+      <!-- HERO BANNER -->
+      <section class="ai-header-hero">
+        <div class="ai-hero-content">
+          <div class="ai-hero-badge">✦ MK97 NEURAL ENGINE</div>
+          <h1 class="ai-hero-title">AI TOOLS</h1>
+          <p class="ai-hero-subtitle">SMART TOOLS FOR EXTRAORDINARY CRICKET CONTENT</p>
+        </div>
+        <div class="ai-hero-art">
+          <img src="MK97.png" alt="MK97 AI">
+        </div>
+      </section>
+
+      <!-- SEARCH BAR -->
+      <div class="ai-search-bar">
+        <span class="ai-search-ico">🔍</span>
+        <input id="aiSearchInput" type="text" placeholder="Search AI tools, or describe what you want to create...">
+        <button class="ai-filter-btn" title="Filters" aria-label="Filters">⚙</button>
+      </div>
+
+      <!-- FILTER TABS -->
+      <nav class="ai-filter-tabs" aria-label="AI categories">
+        <button class="ai-tab-pill active" data-filter="all"><span>田</span> All Tools</button>
+        <button class="ai-tab-pill" data-filter="edit"><span>✂</span> Edit</button>
+        <button class="ai-tab-pill" data-filter="enhance"><span>✦</span> Enhance</button>
+        <button class="ai-tab-pill" data-filter="generate"><span>🖼</span> Generate</button>
+        <button class="ai-tab-pill" data-filter="social"><span>✈</span> Social</button>
+      </nav>
+
+      <!-- FEATURED TOOLS SECTION -->
+      <div class="ai-section-head">
+        <div class="ai-section-title">
+          <span style="color:var(--gold-mid)">⭐</span>
+          <span>FEATURED TOOLS</span>
+        </div>
+        <a href="#all" class="ai-see-all">See All ›</a>
+      </div>
+
+      <!-- 10 FEATURED AI TOOL CARDS (Images 7 & 8) -->
+      <div class="ai-tools-grid" id="aiToolsGrid">
+
+        <!-- 1. Magic Cutout -->
+        <div class="ai-tool-card" data-category="edit" data-tool="magic-cutout">
+          <div class="ai-card-preview">
+            <div class="cutout-demo">
+              <div class="cutout-left">
+                <span style="font-size:38px;filter:drop-shadow(0 0 10px #c084fc)">🏏</span>
+              </div>
+              <div class="cutout-right"></div>
+            </div>
+          </div>
+          <div class="ai-card-info">
+            <div class="ai-card-icon purple">⛶⁺</div>
+            <div class="ai-card-text">
+              <h4>Magic Cutout</h4>
+              <p>Remove or isolate subjects with AI</p>
+            </div>
+            <div class="ai-card-arrow">›</div>
+          </div>
+        </div>
+
+        <!-- 2. Background Remove -->
+        <div class="ai-tool-card" data-category="edit" data-tool="bg-remove">
+          <div class="ai-card-preview">
+            <div class="cutout-demo">
+              <div class="cutout-left" style="background:#090c12">
+                <span style="font-size:34px;opacity:0.4">🏟️</span>
+              </div>
+              <div class="cutout-right" style="background:linear-gradient(135deg,#0369a1,#0f172a);display:flex;align-items:center;justify-content:center">
+                <span style="font-size:34px;filter:drop-shadow(0 0 10px #38bdf8)">🏟️</span>
+              </div>
+              <div class="split-slider-badge">‹›</div>
+            </div>
+          </div>
+          <div class="ai-card-info">
+            <div class="ai-card-icon teal">🖼</div>
+            <div class="ai-card-text">
+              <h4>Background Remove</h4>
+              <p>Clean backgrounds in one click</p>
+            </div>
+            <div class="ai-card-arrow">›</div>
+          </div>
+        </div>
+
+        <!-- 3. Auto Captions -->
+        <div class="ai-tool-card" data-category="edit" data-tool="auto-captions">
+          <div class="ai-card-preview">
+            <div class="captions-preview">
+              <span style="font-size:32px">🎙️</span>
+              <div class="sound-bars">
+                <span></span><span></span><span></span><span></span><span></span>
+              </div>
+              <div class="caption-chip">Game On!</div>
+            </div>
+          </div>
+          <div class="ai-card-info">
+            <div class="ai-card-icon pink">CC</div>
+            <div class="ai-card-text">
+              <h4>Auto Captions</h4>
+              <p>Accurate & stylish captions with AI</p>
+            </div>
+            <div class="ai-card-arrow">›</div>
+          </div>
+        </div>
+
+        <!-- 4. Highlight Detection -->
+        <div class="ai-tool-card" data-category="enhance" data-tool="highlight-detection">
+          <div class="ai-card-preview">
+            <div class="timeline-thumbs">
+              <div class="tl-thumb" style="background:#131d2e;display:flex;align-items:center;justify-content:center"><span style="font-size:16px">🏏</span></div>
+              <div class="tl-thumb" style="background:#1c2538;display:flex;align-items:center;justify-content:center"><span style="font-size:16px">🔥</span></div>
+              <div class="tl-thumb" style="background:#223048;display:flex;align-items:center;justify-content:center"><span style="font-size:16px">⚡</span></div>
+              <div class="tl-thumb" style="background:#2c3d5a;display:flex;align-items:center;justify-content:center"><span style="font-size:16px">🏆</span></div>
+            </div>
+          </div>
+          <div class="ai-card-info">
+            <div class="ai-card-icon gold">✦✦</div>
+            <div class="ai-card-text">
+              <h4>Highlight Detection</h4>
+              <p>Find the best moments automatically</p>
+            </div>
+            <div class="ai-card-arrow">›</div>
+          </div>
+        </div>
+
+        <!-- 5. Style Transfer -->
+        <div class="ai-tool-card" data-category="enhance" data-tool="style-transfer">
+          <div class="ai-card-preview">
+            <div class="cutout-demo">
+              <div class="cutout-left" style="background:#0f172a;display:flex;align-items:center;justify-content:center">
+                <span style="font-size:32px">🇮🇳</span>
+              </div>
+              <div class="cutout-right" style="background:radial-gradient(circle,#f59e0b,#451a03);display:flex;align-items:center;justify-content:center">
+                <span style="font-size:32px;filter:drop-shadow(0 0 12px #fef08a)">⚡</span>
+              </div>
+            </div>
+          </div>
+          <div class="ai-card-info">
+            <div class="ai-card-icon blue">🖌</div>
+            <div class="ai-card-text">
+              <h4>Style Transfer</h4>
+              <p>Turn your clips into stunning styles</p>
+            </div>
+            <div class="ai-card-arrow">›</div>
+          </div>
+        </div>
+
+        <!-- 6. Brand Match -->
+        <div class="ai-tool-card" data-category="enhance" data-tool="brand-match">
+          <div class="ai-card-preview" style="background:#080b12;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px">
+            <div style="font-size:13px;font-weight:900;letter-spacing:0.1em;color:var(--gold-mid)">MK97 STUDIO</div>
+            <div style="display:flex;gap:4px">
+              <span style="width:14px;height:14px;border-radius:50%;background:#f59e0b;display:inline-block"></span>
+              <span style="width:14px;height:14px;border-radius:50%;background:#fcd34d;display:inline-block"></span>
+              <span style="width:14px;height:14px;border-radius:50%;background:#b45309;display:inline-block"></span>
+              <span style="width:14px;height:14px;border-radius:50%;background:#040507;border:1px solid #fff;display:inline-block"></span>
+            </div>
+          </div>
+          <div class="ai-card-info">
+            <div class="ai-card-icon gold">◫</div>
+            <div class="ai-card-text">
+              <h4>Brand Match</h4>
+              <p>Apply your brand colors, logo & style instantly</p>
+            </div>
+            <div class="ai-card-arrow">›</div>
+          </div>
+        </div>
+
+        <!-- 7. Generate Poster -->
+        <div class="ai-tool-card" data-category="generate" data-tool="generate-poster">
+          <div class="ai-card-preview" style="background:radial-gradient(circle at 50% 30%,#b91c1c,#050608);display:flex;flex-direction:column;align-items:center;justify-content:center">
+            <b style="font-size:16px;font-weight:900;color:#fff;letter-spacing:1px;text-shadow:0 2px 10px rgba(0,0,0,0.8)">MATCH DAY</b>
+            <span style="font-size:8px;font-weight:800;color:var(--gold-mid);margin-top:2px">MK97 CREATOR</span>
+          </div>
+          <div class="ai-card-info">
+            <div class="ai-card-icon coral">🖼</div>
+            <div class="ai-card-text">
+              <h4>Generate Poster</h4>
+              <p>Create stunning posters with AI</p>
+            </div>
+            <div class="ai-card-arrow">›</div>
+          </div>
+        </div>
+
+        <!-- 8. Beat Sync -->
+        <div class="ai-tool-card" data-category="edit" data-tool="beat-sync">
+          <div class="ai-card-preview" style="background:#050914;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px">
+            <span style="font-size:24px;margin-bottom:6px">🏏</span>
+            <div style="width:90%;height:14px;background:rgba(34,211,238,0.2);border-radius:6px;display:flex;align-items:center;justify-content:space-around;padding:0 6px">
+              <span style="width:3px;height:12px;background:#22d3ee;border-radius:2px"></span>
+              <span style="width:3px;height:8px;background:#22d3ee;border-radius:2px"></span>
+              <span style="width:3px;height:14px;background:#22d3ee;border-radius:2px"></span>
+              <span style="width:3px;height:6px;background:#22d3ee;border-radius:2px"></span>
+              <span style="width:3px;height:12px;background:#22d3ee;border-radius:2px"></span>
+              <span style="width:3px;height:10px;background:#22d3ee;border-radius:2px"></span>
+            </div>
+          </div>
+          <div class="ai-card-info">
+            <div class="ai-card-icon cyan">♫</div>
+            <div class="ai-card-text">
+              <h4>Beat Sync</h4>
+              <p>Auto sync edits to music beats</p>
+            </div>
+            <div class="ai-card-arrow">›</div>
+          </div>
+        </div>
+
+        <!-- 9. Auto Resize -->
+        <div class="ai-tool-card" data-category="social" data-tool="auto-resize">
+          <div class="ai-card-preview">
+            <div class="social-icons-row">
+              <div class="social-icon-chip ig">📸</div>
+              <div class="social-icon-chip yt">▶</div>
+              <div class="social-icon-chip tt">♬</div>
+              <div class="social-icon-chip fb">f</div>
+            </div>
+          </div>
+          <div class="ai-card-info">
+            <div class="ai-card-icon teal">⛶</div>
+            <div class="ai-card-text">
+              <h4>Auto Resize</h4>
+              <p>Optimize for all social platforms</p>
+            </div>
+            <div class="ai-card-arrow">›</div>
+          </div>
+        </div>
+
+        <!-- 10. Smart Enhance -->
+        <div class="ai-tool-card" data-category="enhance" data-tool="smart-enhance">
+          <div class="ai-card-preview" style="background:radial-gradient(circle at 50% 40%,#1e293b,#020617);display:flex;align-items:center;justify-content:center;position:relative">
+            <span style="font-size:38px;filter:drop-shadow(0 0 10px rgba(245,158,11,0.6))">👑</span>
+            <span style="position:absolute;bottom:8px;right:12px;background:var(--gold-metallic);color:#000;font-size:8px;font-weight:900;padding:2px 6px;border-radius:4px">AI HD</span>
+          </div>
+          <div class="ai-card-info">
+            <div class="ai-card-icon gold">AI</div>
+            <div class="ai-card-text">
+              <h4>Smart Enhance</h4>
+              <p>Improve quality, sharpen & denoise</p>
+            </div>
+            <div class="ai-card-arrow">›</div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- BOTTOM NAVIGATION (Shared Component) -->
+    <div data-bottomnav></div>
   </div>
-</section>
-<aside class="panel"><h3>Smart Cutout</h3><label class="upload">Upload image<input id="aiUpload" type="file" accept="image/*" hidden></label><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><img id="aiOriginal" class="hidden" style="width:100%;aspect-ratio:1;object-fit:contain;border-radius:13px;background:#c8c8c8"><img id="aiResult" class="hidden" style="width:100%;aspect-ratio:1;object-fit:contain;border-radius:13px;background:repeating-conic-gradient(#aaa 0 25%,#ddd 0 50%) 50%/14px 14px"></div><button id="removeBackground" class="gold-btn" style="width:100%;margin-top:10px">Remove Background</button><a class="ghost-btn" href="poster-editor.html" style="width:100%;margin-top:8px">Open Result in Poster Studio</a></aside>
-</div>
-</main><div data-bottomnav></div></div><script src="templates-data.js?v=25"></script><script src="app.js?v=25"></script></body></html>
+
+  <!-- INTERACTIVE AI MODAL -->
+  <div id="aiModal" class="ai-modal-wrap hidden">
+    <div class="ai-modal-box">
+      <div class="ai-modal-head">
+        <b id="aiModalTitle">AI Tool</b>
+        <button id="closeAiModal" class="sheet-close" style="font-size:20px;cursor:pointer">×</button>
+      </div>
+      <div class="ai-modal-body" id="aiModalBody"></div>
+    </div>
+  </div>
+
+  <script src="templates-data.js?v=27"></script>
+  <script src="app.js?v=27"></script>
+  <script>
+    // Search & Filter Tabs
+    const filterTabs = document.querySelectorAll('.ai-tab-pill');
+    const toolCards = document.querySelectorAll('.ai-tool-card');
+    const searchInput = document.getElementById('aiSearchInput');
+
+    filterTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        filterTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const filter = tab.dataset.filter;
+        applyFilters(filter, searchInput.value);
+      });
+    });
+
+    searchInput.addEventListener('input', () => {
+      const activeTab = document.querySelector('.ai-tab-pill.active');
+      applyFilters(activeTab ? activeTab.dataset.filter : 'all', searchInput.value);
+    });
+
+    function applyFilters(category, query) {
+      const q = (query || '').toLowerCase().trim();
+      toolCards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        const cat = card.dataset.category;
+        const matchesCategory = (category === 'all' || cat === category);
+        const matchesQuery = !q || text.includes(q);
+        card.style.display = (matchesCategory && matchesQuery) ? 'flex' : 'none';
+      });
+    }
+
+    // Modal Operations
+    const modal = document.getElementById('aiModal');
+    const modalTitle = document.getElementById('aiModalTitle');
+    const modalBody = document.getElementById('aiModalBody');
+    const closeModalBtn = document.getElementById('closeAiModal');
+
+    closeModalBtn.onclick = () => modal.classList.add('hidden');
+    modal.onclick = (e) => { if (e.target === modal) modal.classList.add('hidden'); };
+
+    toolCards.forEach(card => {
+      card.addEventListener('click', () => {
+        const tool = card.dataset.tool;
+        openAiToolModal(tool);
+      });
+    });
+
+    function openAiToolModal(tool) {
+      modal.classList.remove('hidden');
+
+      if (tool === 'magic-cutout' || tool === 'bg-remove') {
+        modalTitle.textContent = tool === 'magic-cutout' ? 'AI Magic Cutout' : 'AI Background Remover';
+        modalBody.innerHTML = `
+          <p style="font-size:11px;color:var(--text-muted);margin:0 0 14px">Upload your cricket photo or player image to automatically separate subject from background with pixel precision.</p>
+          <label class="gold-btn" style="display:block;text-align:center;margin-bottom:12px;cursor:pointer">
+            📁 Select Cricket Photo
+            <input id="modalPhotoInput" type="file" accept="image/*" hidden>
+          </label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+            <div>
+              <small style="display:block;color:#94a3b8;margin-bottom:4px;font-size:9px">ORIGINAL</small>
+              <img id="origPreview" src="fwcwl-logo.jpeg" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;background:#1e293b;border:1px solid rgba(255,255,255,0.1)">
+            </div>
+            <div>
+              <small style="display:block;color:var(--gold-mid);margin-bottom:4px;font-size:9px">AI TRANSPARENT CUTOUT</small>
+              <div style="width:100%;aspect-ratio:1;border-radius:12px;overflow:hidden;background:repeating-conic-gradient(#1e293b 0 25%, #0f172a 0 50%) 50% / 12px 12px;border:1px solid var(--border-gold);display:grid;place-items:center">
+                <canvas id="cutoutCanvas" style="width:100%;height:100%;object-fit:contain"></canvas>
+              </div>
+            </div>
+          </div>
+          <button id="runCutoutBtn" class="gold-btn" style="width:100%;margin-bottom:8px">⚡ Process Cutout Now</button>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <button id="sendToPosterBtn" class="ghost-btn">Open in Poster Studio</button>
+            <button id="sendToVideoBtn" class="ghost-btn">Send to Video Studio</button>
+          </div>
+        `;
+
+        const photoInput = document.getElementById('modalPhotoInput');
+        const origPreview = document.getElementById('origPreview');
+        const canvas = document.getElementById('cutoutCanvas');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+        photoInput.onchange = (e) => {
+          const file = e.target.files?.[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = () => {
+            origPreview.src = reader.result;
+          };
+          reader.readAsDataURL(file);
+        };
+
+        let lastCutoutUrl = null;
+
+        document.getElementById('runCutoutBtn').onclick = () => {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = () => {
+            canvas.width = img.naturalWidth || 600;
+            canvas.height = img.naturalHeight || 600;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0);
+
+            // Real alpha edge mask
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imgData.data;
+            const cornerR = data[0], cornerG = data[1], cornerB = data[2];
+
+            for (let i = 0; i < data.length; i += 4) {
+              const r = data[i], g = data[i+1], b = data[i+2];
+              const dist = Math.hypot(r - cornerR, g - cornerG, b - cornerB);
+              if (dist < 45) {
+                data[i+3] = 0;
+              } else if (dist < 75) {
+                data[i+3] = Math.round(data[i+3] * (dist - 45) / 30);
+              }
+            }
+            ctx.putImageData(imgData, 0, 0);
+            lastCutoutUrl = canvas.toDataURL('image/png');
+            alert('AI Cutout extracted successfully!');
+          };
+          img.src = origPreview.src;
+        };
+
+        document.getElementById('sendToPosterBtn').onclick = () => {
+          const url = lastCutoutUrl || origPreview.src;
+          localStorage.setItem('mk97.pendingImage', JSON.stringify(url));
+          location.href = 'poster-editor.html';
+        };
+
+        document.getElementById('sendToVideoBtn').onclick = () => {
+          const url = lastCutoutUrl || origPreview.src;
+          localStorage.setItem('mk97.pendingVideoAsset', JSON.stringify({
+            src: url,
+            name: 'AI-Cutout.png',
+            kind: 'image',
+            timestamp: Date.now()
+          }));
+          location.href = 'video-editor.html?import=poster';
+        };
+
+      } else if (tool === 'auto-captions') {
+        modalTitle.textContent = 'Auto Captions & Subtitles';
+        modalBody.innerHTML = `
+          <p style="font-size:11px;color:var(--text-muted);margin:0 0 14px">Generate word-by-word karaoke kinetic captions with custom colors and cricket animations.</p>
+          <label class="control" style="margin-bottom:10px">
+            <span style="font-size:10px;font-weight:800;color:var(--gold-mid)">CAPTION TOPIC / COMMENTARY</span>
+            <textarea id="captionText" style="width:100%;height:80px;background:#05070a;border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:8px;color:#fff;font-size:11px">WHAT A SHOT! SIX RUNS! KOHLI HITS IT OUT OF THE STADIUM!</textarea>
+          </label>
+          <div class="row2" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+            <label class="control">
+              <span style="font-size:9px;color:#94a3b8">ANIMATION STYLE</span>
+              <select id="captionStyle" style="width:100%;background:#0e131d;border:1px solid rgba(255,255,255,0.1);padding:6px;border-radius:8px;color:#fff">
+                <option>Bounce Glow</option>
+                <option>Typewriter</option>
+                <option>Karaoke Highlight</option>
+                <option>Fire Sparks</option>
+              </select>
+            </label>
+            <label class="control">
+              <span style="font-size:9px;color:#94a3b8">HIGHLIGHT COLOR</span>
+              <input id="captionColor" type="color" value="#f59e0b" style="width:100%;height:34px;background:none;border:none">
+            </label>
+          </div>
+          <button id="applyCaptionsBtn" class="gold-btn" style="width:100%">⚡ Send Captions to Video Studio</button>
+        `;
+        document.getElementById('applyCaptionsBtn').onclick = () => {
+          const txt = document.getElementById('captionText').value;
+          localStorage.setItem('mk97.customCaptions', JSON.stringify({
+            text: txt,
+            style: document.getElementById('captionStyle').value,
+            color: document.getElementById('captionColor').value
+          }));
+          location.href = 'video-editor.html?captions=true';
+        };
+
+      } else if (tool === 'generate-poster') {
+        modalTitle.textContent = 'AI Match Poster Generator';
+        modalBody.innerHTML = `
+          <p style="font-size:11px;color:var(--text-muted);margin:0 0 14px">Input match details and let the MK97 AI generate a bespoke luxury poster layout.</p>
+          <div style="display:grid;gap:10px;margin-bottom:14px">
+            <input id="posterTeam1" placeholder="Team 1 (e.g. INDIA)" value="INDIA" style="background:#0e131d;border:1px solid rgba(255,255,255,0.15);padding:8px 12px;border-radius:8px;color:#fff;font-weight:800">
+            <input id="posterTeam2" placeholder="Team 2 (e.g. AUSTRALIA)" value="AUSTRALIA" style="background:#0e131d;border:1px solid rgba(255,255,255,0.15);padding:8px 12px;border-radius:8px;color:#fff;font-weight:800">
+            <input id="posterHeadline" placeholder="Match Type" value="T20 WORLD CUP FINALS" style="background:#0e131d;border:1px solid rgba(255,255,255,0.15);padding:8px 12px;border-radius:8px;color:#fff">
+            <input id="posterVenue" placeholder="Venue & Date" value="MELBOURNE CRICKET GROUND • 7:30 PM" style="background:#0e131d;border:1px solid rgba(255,255,255,0.15);padding:8px 12px;border-radius:8px;color:#fff">
+          </div>
+          <button id="createAiPosterBtn" class="gold-btn" style="width:100%">⚡ Generate & Edit in Studio</button>
+        `;
+        document.getElementById('createAiPosterBtn').onclick = () => {
+          const t1 = document.getElementById('posterTeam1').value;
+          const t2 = document.getElementById('posterTeam2').value;
+          const hl = document.getElementById('posterHeadline').value;
+          const v = document.getElementById('posterVenue').value;
+          localStorage.setItem('mk97.customMatchPoster', JSON.stringify({ t1, t2, hl, v }));
+          location.href = 'poster-editor.html?aiGenerate=true';
+        };
+
+      } else {
+        modalTitle.textContent = card.querySelector('h4').textContent;
+        modalBody.innerHTML = `
+          <p style="font-size:12px;color:#cbd5e1;line-height:1.5">${card.querySelector('p').textContent}</p>
+          <div style="background:rgba(245,158,11,0.1);border:1px solid var(--border-gold);border-radius:12px;padding:14px;margin:14px 0">
+            <b style="color:var(--gold-mid);font-size:11px;display:block;margin-bottom:4px">✦ MK97 ACCELERATION READY</b>
+            <small style="color:#94a3b8;font-size:10px">This neural tool is integrated directly into the MK97 Video & Poster suites. Tap below to launch your workspace with this AI feature active.</small>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <a href="video-editor.html" class="gold-btn" style="text-align:center">Open in Video Studio</a>
+            <a href="poster-editor.html" class="ghost-btn" style="text-align:center">Open in Poster Studio</a>
+          </div>
+        `;
+      }
+    }
+  </script>
+</body>
+</html>

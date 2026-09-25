@@ -1,43 +1,170 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#050608"><meta name="mk97-build" content="26.0"><title>MK97 Creative Studio Pro</title><link rel="stylesheet" href="app.css?v=26"></head><body data-nav="home"><div class="page">
-<header class="topbar">
-<a class="brand" href="index.html"><span class="brand-logo"><img src="assets/MK97.png" alt="MK97"></span><span class="brand-copy"><b>MK97</b><small>CREATIVE STUDIO</small></span></a>
-<div class="page-title">Create<small>POSTER • VIDEO • SOCIAL</small></div>
-<div class="top-actions"><a class="icon-btn" href="projects.html">▧</a><a class="icon-btn" href="more.html">☷</a></div>
-</header>
-<main class="shell main">
-<div class="logo-transition"><div class="ring"></div><img src="assets/MK97.png" alt="MK97"></div>
-<section class="hero">
-<div class="eyebrow">MK97 CREATIVE STUDIO</div>
-<h1>Create like a mobile pro editor.</h1>
-<p>A fast, clean creator workflow with projects, templates, poster editing, video timelines, effects, media, text, brand tools and export.</p>
-<div class="hero-actions"><a class="gold-btn" href="video-editor.html">＋ New Video Project</a><a class="ghost-btn" href="poster-editor.html">＋ New Poster</a></div>
-<div class="creator-row">
-  <a class="new-project" href="video-editor.html"><div><div class="eyebrow">VIDEO EDITOR</div><h3>Start a new video</h3><p>Import clips, trim, split, add text, motion, effects and render.</p></div><span class="gold-btn" style="align-self:flex-start">Create video →</span></a>
-  <div class="quick-stack">
-    <a class="quick-card" href="poster-editor.html"><span class="ico">✎</span><span><b>Poster Studio</b><small>Templates, layers, cutouts and export</small></span></a>
-    <a class="quick-card" href="templates.html"><span class="ico">▦</span><span><b>Templates</b><small>Browse 120 cricket designs</small></span></a>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#040507">
+  <meta name="mk97-build" content="26.0">
+  <title>MK97 Creative Studio — Elite Cricket Content</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Cinzel:wght@700;900&family=DM+Sans:wght@500;700;800&family=Inter:wght@400;600;700;800&family=Montserrat:wght@700;800;900&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="app.css?v=26">
+</head>
+<body data-nav="home">
+  <div class="page">
+    <!-- GOLD LUXURY TOPBAR -->
+    <header class="topbar">
+      <a class="brand" href="index.html">
+        <span class="brand-logo"><img src="assets/MK97.png" alt="MK97"></span>
+        <span class="brand-copy">
+          <b>MK97</b>
+          <small>CREATIVE STUDIO</small>
+        </span>
+      </a>
+
+      <div class="top-actions">
+        <button class="icon-btn" title="Notifications" aria-label="Notifications">🔔</button>
+        <div class="avatar-btn" title="Creator Profile">
+          <img src="assets/stadium-intro.png" alt="Avatar">
+        </div>
+      </div>
+    </header>
+
+    <main class="shell main">
+      <!-- SEARCH BAR -->
+      <div class="search-bar-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="globalSearchInput" placeholder="Search templates, tools, projects..." autocomplete="off">
+        <button class="filter-icon-btn" title="Filter Tools">⚙</button>
+      </div>
+
+      <!-- HERO CRICKET BANNER (MATCHES IMAGE 1) -->
+      <section class="hero-cricket">
+        <div class="hero-eyebrow">CREATE ELITE</div>
+        <h1 class="hero-title">
+          <span>CRICKET</span>
+          CONTENT
+        </h1>
+        <div class="hero-meta">POSTERS • VIDEOS • SOCIAL MEDIA &nbsp;|&nbsp; POWERED BY CREATORS</div>
+        <a class="gold-cta-btn" href="video-editor.html">
+          CREATE NOW <span>›</span>
+        </a>
+      </section>
+
+      <!-- QUICK ACTIONS SECTION (MATCHES IMAGE 1) -->
+      <div class="section-title-row">
+        <h3>Quick Actions</h3>
+        <a href="templates.html">See All ›</a>
+      </div>
+
+      <div class="quick-actions-grid">
+        <!-- 1. Templates -->
+        <a class="qa-card gold-card" href="templates.html">
+          <div class="qa-header">
+            <div class="qa-icon">▦</div>
+            <span class="qa-arrow">›</span>
+          </div>
+          <div>
+            <h4 class="qa-title">Templates</h4>
+            <p class="qa-sub">1000+ Premium</p>
+          </div>
+        </a>
+
+        <!-- 2. Poster Editor -->
+        <a class="qa-card gold-card" href="poster-editor.html">
+          <div class="qa-header">
+            <div class="qa-icon">✎</div>
+            <span class="qa-arrow">›</span>
+          </div>
+          <div>
+            <h4 class="qa-title">Poster Editor</h4>
+            <p class="qa-sub">Pro Design Tools</p>
+          </div>
+        </a>
+
+        <!-- 3. Video Editor (Cyan Glow) -->
+        <a class="qa-card blue-card" href="video-editor.html">
+          <div class="qa-header">
+            <div class="qa-icon">▷</div>
+            <span class="qa-arrow">›</span>
+          </div>
+          <div>
+            <h4 class="qa-title">Video Editor</h4>
+            <p class="qa-sub">Multi-track Editor</p>
+          </div>
+        </a>
+
+        <!-- 4. AI Tools (Purple Glow) -->
+        <a class="qa-card purple-card" href="ai-tools.html">
+          <div class="qa-header">
+            <div class="qa-icon">✦</div>
+            <span class="qa-arrow">›</span>
+          </div>
+          <div>
+            <h4 class="qa-title">AI Tools</h4>
+            <p class="qa-sub">Smart & Powerful</p>
+          </div>
+        </a>
+
+        <!-- 5. Brand Kit -->
+        <a class="qa-card gold-card" href="brand.html">
+          <div class="qa-header">
+            <div class="qa-icon">👑</div>
+            <span class="qa-arrow">›</span>
+          </div>
+          <div>
+            <h4 class="qa-title">Brand Kit</h4>
+            <p class="qa-sub">Logos, Fonts, Assets</p>
+          </div>
+        </a>
+
+        <!-- 6. Projects (Green Glow) -->
+        <a class="qa-card green-card" href="projects.html">
+          <div class="qa-header">
+            <div class="qa-icon">▧</div>
+            <span class="qa-arrow">›</span>
+          </div>
+          <div>
+            <h4 class="qa-title">Projects</h4>
+            <p class="qa-sub">Your Creations</p>
+          </div>
+        </a>
+      </div>
+
+      <!-- TRENDING TEMPLATES SECTION (MATCHES IMAGE 1) -->
+      <div class="section-title-row">
+        <div>
+          <h3>🔥 Trending Templates</h3>
+          <p style="margin:2px 0 0;font-size:9px;color:var(--text-muted)">Professional templates for viral cricket content</p>
+        </div>
+        <a href="templates.html">See All ›</a>
+      </div>
+      <div class="trending-grid" id="trendingTemplates"></div>
+
+      <!-- AI BANNER (MATCHES IMAGE 1) -->
+      <section class="ai-banner-card">
+        <div class="ai-banner-left">
+          <div class="ai-chip-icon">🤖</div>
+          <div class="ai-banner-copy">
+            <h4>Turn Your Ideas Into Stunning Cricket Content</h4>
+            <p>AI-powered tools for posters, videos, auto-captions & cutouts.</p>
+          </div>
+        </div>
+        <a class="ai-explore-btn" href="ai-tools.html">Explore AI ›</a>
+      </section>
+    </main>
+
+    <!-- BOTTOM NAVIGATION (MATCHES IMAGE 1) -->
+    <div data-bottomnav></div>
   </div>
-</div>
-</section>
 
-<div class="section-head"><div><h2>Quick tools</h2><p>Creator shortcuts, like a mobile editing app.</p></div></div>
-<div class="tool-grid">
-<a class="tool-card" href="media.html"><span class="tool-ico">▣</span><b>Media</b><small>Upload images and assets.</small></a>
-<a class="tool-card" href="ai-tools.html"><span class="tool-ico">✦</span><b>Cutout</b><small>Remove simple backgrounds locally.</small></a>
-<a class="tool-card" href="brand.html"><span class="tool-ico">◇</span><b>Brand Kit</b><small>Colors, identity and logo settings.</small></a>
-<a class="tool-card" href="projects.html"><span class="tool-ico">▧</span><b>Projects</b><small>Return to recent work.</small></a>
-</div>
-
-<div class="section-head"><div><h2>Templates for you</h2><p>Cricket graphics ready to edit.</p></div><a href="templates.html">See all →</a></div>
-<div class="template-grid" id="trendingTemplates"></div>
-</main><div data-bottomnav></div></div><script src="templates-data.js?v=26"></script><script src="app.js?v=26"></script>
-<script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./sw.js", { updateViaCache: "none" }).catch(() => {});
-}
-window.addEventListener("load", () => {
-  navigator.serviceWorker?.getRegistrations?.().then(regs => {
-    regs.forEach(r => r.update?.());
-  }).catch(() => {});
-});
-</script></body></html>
+  <script src="templates-data.js?v=26"></script>
+  <script src="app.js?v=26"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("./sw.js", { updateViaCache: "none" }).catch(() => {});
+    }
+  </script>
+</body>
+</html>

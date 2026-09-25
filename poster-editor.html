@@ -1,49 +1,242 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#030405"><title>Poster Studio — MK97</title><link rel="stylesheet" href="app.css?v=25"><link rel="stylesheet" href="editor.css?v=25"></head><body class="editor-page"><div class="editor-shell">
-<header class="editor-topbar">
-<a class="editor-back" href="index.html" aria-label="Back">‹</a>
-<div class="editor-title"><input id="projectName" value="MK97 Poster" aria-label="Project name"></div>
-<div class="editor-actions"><button id="undoBtn" class="editor-btn">↶</button><button id="redoBtn" class="editor-btn">↷</button><button id="sendToVideoBtn" class="editor-btn gold" title="Send to Video Studio">▷ Video</button><button id="exportBtn" class="editor-btn primary">Export</button></div>
-</header>
-<main class="editor-main">
-<section class="preview-area">
-<div class="preview-toolbar">
-  <div class="group"><select id="canvasSize"><option value="portrait">4:5</option><option value="square">1:1</option><option value="story">9:16</option></select><button id="fitBtn">Fit</button><button id="gridBtn">Grid</button></div>
-  <div class="group"><button id="zoomOut">−</button><button id="zoomLabel">100%</button><button id="zoomIn">＋</button></div>
-</div>
-<div id="stage" class="stage"><div id="canvasFrame" class="canvas-frame"><canvas id="posterCanvas" width="1080" height="1350"></canvas></div></div>
-<div class="preview-status"><span>Tap an object to edit</span><strong id="posterDimensions">1080 × 1350</strong></div>
-</section>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#040507">
+  <title>Poster Studio — MK97</title>
+  <link rel="stylesheet" href="app.css?v=27">
+  <link rel="stylesheet" href="editor.css?v=27">
+</head>
+<body class="editor-page">
+  <div class="editor-shell">
+    
+    <!-- TOPBAR (Image 5) -->
+    <header class="editor-topbar" style="grid-template-columns:auto 1fr auto auto;gap:8px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <a class="editor-back" href="index.html" aria-label="Back">‹</a>
+        <a class="brand" href="index.html" style="display:flex;align-items:center;gap:6px">
+          <span class="brand-logo" style="width:26px;height:26px"><img src="MK97.png" alt="MK97"></span>
+          <span class="brand-copy" style="line-height:1"><b style="font-size:11px">MK97</b><small style="font-size:7px">CREATIVE STUDIO</small></span>
+        </a>
+      </div>
 
-<nav class="poster-bottom-tools" aria-label="Poster tools">
-  <button class="tool-btn" data-tool="templates"><span>▦</span>Templates</button>
-  <button class="tool-btn" data-tool="media"><span>＋</span>Media</button>
-  <button class="tool-btn" id="addTextBtn"><span>T</span>Text</button>
-  <button class="tool-btn" id="addShapeBtn"><span>◆</span>Shape</button>
-  <button class="tool-btn" data-tool="adjust"><span>☼</span>Adjust</button>
-  <button class="tool-btn" data-tool="layers"><span>☷</span>Layers</button>
-  <button class="tool-btn" id="removeBgBtn"><span>✂</span>Cutout</button>
-  <button class="tool-btn" data-tool="canvas"><span>▣</span>Canvas</button>
-  <button class="tool-btn primary" id="mobileExport"><span>↓</span>Export</button>
-</nav>
-</main>
+      <!-- Aspect Ratio Pill (Image 5) -->
+      <div style="display:flex;justify-content:center">
+        <select id="canvasSize" style="background:#131822;border:1px solid rgba(255,255,255,0.12);color:#fff;border-radius:999px;padding:4px 12px;font-size:10px;font-weight:800;outline:none;cursor:pointer">
+          <option value="story">1080 × 1920 (9:16)</option>
+          <option value="portrait" selected>1080 × 1350 (4:5)</option>
+          <option value="square">1080 × 1080 (1:1)</option>
+        </select>
+      </div>
 
-<div id="sheetBackdrop" class="sheet-backdrop"></div>
+      <!-- Export & More (Image 5) -->
+      <div class="editor-actions" style="gap:6px">
+        <button id="exportBtn" class="gold-btn" style="height:32px;padding:0 14px;font-size:11px;font-weight:900;border-radius:10px;display:flex;align-items:center;gap:4px">
+          <span>📤</span> Export
+        </button>
+        <button id="moreMenuBtn" class="editor-btn" title="More options" style="width:32px;height:32px;padding:0">⋮</button>
+      </div>
+    </header>
 
-<section id="assetSheet" class="bottom-sheet" aria-label="Assets">
-<div class="sheet-handle"></div><div class="sheet-head"><b>Creative tools</b><button class="sheet-close" data-close>×</button></div>
-<div class="sheet-content">
-  <div class="sheet-tabs"><button class="sheet-tab active" data-tab="templates">Templates</button><button class="sheet-tab" data-tab="media">Media</button><button class="sheet-tab" data-tab="layers">Layers</button></div>
-  <section data-panel="templates"><div class="editor-search"><input id="editorTemplateSearch" placeholder="Search templates..."></div><div id="editorTemplateCount" style="font-size:8px;color:#777;margin-bottom:8px"></div><div id="editorTemplateGrid" class="template-mini-grid"></div></section>
-  <section data-panel="media" class="hidden"><div class="asset-grid-editor"><button id="uploadImageBtn" class="asset-action"><span><b>＋</b>Upload image</span></button><button class="asset-action" onclick="location.href='media.html'"><span><b>▣</b>Media browser</span></button><button class="asset-action" onclick="location.href='brand.html'"><span><b>◇</b>Brand kit</span></button><button class="asset-action" id="mediaAddText"><span><b>T</b>Add text</span></button></div><input id="imageInput" type="file" accept="image/*" hidden></section>
-  <section data-panel="layers" class="hidden"><div id="layerList" class="layer-list"></div></section>
-</div>
-</section>
+    <!-- ACTION BAR (Image 5) -->
+    <div class="poster-action-bar">
+      <button id="undoBtn" class="action-bar-btn" title="Undo (Ctrl+Z)"><span>↶</span>Undo</button>
+      <button id="redoBtn" class="action-bar-btn" title="Redo (Ctrl+Y)"><span>↷</span>Redo</button>
+      <button id="toggleLayerPanelBtn" class="action-bar-btn active" title="Toggle Layer Panel"><span>◫</span>Layer</button>
+      <button id="gridBtn" class="action-bar-btn" title="Toggle Grid"><span>⊞</span>Grid</button>
+      <button id="guidesBtn" class="action-bar-btn active" title="Toggle Guides"><span>✛</span>Guides</button>
+      <button id="previewBtn" class="action-bar-btn" title="Preview Full Screen"><span>👁</span>Preview</button>
+      <button id="saveBtn" class="action-bar-btn" title="Save Project"><span>💾</span>Save</button>
+    </div>
 
-<section id="editSheet" class="bottom-sheet" aria-label="Edit properties">
-<div class="sheet-handle"></div><div class="sheet-head"><b id="inspectorTitle">Edit</b><button class="sheet-close" data-close>×</button></div>
-<div class="sheet-content"><div id="inspector"></div><div class="sheet-footer"><button id="duplicateBtn" class="small-btn">Duplicate</button><button id="deleteBtn" class="small-btn danger">Delete</button></div></div>
-</section>
+    <!-- MAIN WORKSPACE: LEFT RAIL + STAGE + RIGHT LAYER PANEL -->
+    <div class="poster-workspace">
+      
+      <!-- LEFT TOOL RAIL (Image 5) -->
+      <aside class="poster-left-rail" aria-label="Creative Tools">
+        <button class="rail-btn active" data-rail="select"><span>➤</span>Select</button>
+        <button class="rail-btn" data-rail="templates"><span>▦</span>Templates</button>
+        <button class="rail-btn" data-rail="text" id="railAddText"><span>T</span>Text</button>
+        <button class="rail-btn" data-rail="elements" id="railAddShape"><span>❖</span>Elements</button>
+        <button class="rail-btn" data-rail="photos" id="railAddPhoto"><span>🖼</span>Photos</button>
+        <button class="rail-btn" data-rail="background" id="railBg"><span>▤</span>Background</button>
+        <button class="rail-btn" data-rail="ai" onclick="location.href='ai-tools.html'"><span>✦</span>AI Tools</button>
+        <button class="rail-btn" data-rail="brand" onclick="location.href='brand.html'"><span>👑</span>Brand Kit</button>
+        <button class="rail-btn" data-rail="draw" id="railDraw"><span>✎</span>Draw</button>
+        <button class="rail-btn" data-rail="more" id="railMore"><span>•••</span>More</button>
+      </aside>
 
-<div id="quickSelected" class="quick-selected"><button id="quickEdit">Edit</button><button id="quickDuplicate">Duplicate</button><button id="quickDelete" class="danger">Delete</button></div>
+      <!-- CENTER CANVAS STAGE -->
+      <main class="poster-stage-wrap" id="stage">
+        <div id="canvasFrame" class="canvas-frame">
+          <canvas id="posterCanvas" width="1080" height="1350"></canvas>
+        </div>
+      </main>
 
-</div><script src="templates-data.js?v=25"></script><script src="poster-editor.js?v=25"></script></body></html>
+      <!-- RIGHT FLOATING LAYER PANEL (Image 5) -->
+      <aside class="floating-layer-panel" id="floatingLayerPanel">
+        <div class="layer-panel-head">
+          <span>LAYERS</span>
+          <button id="closeLayerPanel" style="background:none;border:none;color:#94a3b8;font-size:12px;cursor:pointer">✕</button>
+        </div>
+        <div class="layer-panel-body" id="floatingLayerList">
+          <!-- Dynamic layer items rendered here -->
+        </div>
+        <div class="layer-panel-foot">
+          <button class="add-layer-btn" id="floatingAddLayerBtn">
+            <span>＋</span> Add Layer
+          </button>
+        </div>
+      </aside>
+    </div>
+
+    <!-- BOTTOM EDITING TOOLBAR (Image 5) -->
+    <div class="poster-bottom-dock">
+      
+      <!-- Tool Row -->
+      <div class="poster-tool-row">
+        <button class="p-tool-btn" id="toolReplace"><span>⇄</span>Replace</button>
+        <button class="p-tool-btn" id="toolFilters"><span>◌⃝</span>Filters</button>
+        <button class="p-tool-btn" id="toolAdjust"><span>⚙</span>Adjust</button>
+        <button class="p-tool-btn active" id="toolEffects"><span>✦</span>Effects</button>
+        <button class="p-tool-btn" id="toolAiEnhance"><span>AI</span>AI Enhance</button>
+        <button class="p-tool-btn" id="toolRemoveBg"><span>✂</span>Remove BG</button>
+        <button class="p-tool-btn" id="toolMask"><span>◑</span>Mask</button>
+        <button class="p-tool-btn" id="toolBlend"><span>⧉</span>Blend</button>
+      </div>
+
+      <!-- Effects Sub-tray (Image 5) -->
+      <div class="poster-effects-tray" id="effectsSubTray">
+        <div class="tray-category-tabs">
+          <button class="tray-cat-tab active" data-cat="effects">Effects</button>
+          <button class="tray-cat-tab" data-cat="color">Color</button>
+          <button class="tray-cat-tab" data-cat="light">Light</button>
+          <button class="tray-cat-tab" data-cat="shadow">Shadow</button>
+          <button class="tray-cat-tab" data-cat="glow">Glow</button>
+          <button class="tray-cat-tab" data-cat="blur">Blur</button>
+        </div>
+
+        <div class="tray-presets-scroll" id="trayPresetsScroll">
+          <!-- Preset: None -->
+          <div class="preset-card" data-preset="none">
+            <div class="preset-thumb">
+              <span style="font-size:22px;color:#64748b">⊘</span>
+            </div>
+            <span>None</span>
+          </div>
+
+          <!-- Preset: Cinematic -->
+          <div class="preset-card active" data-preset="cinematic">
+            <div class="preset-thumb">
+              <img src="fwcwl-logo.jpeg" alt="Cinematic" style="filter:contrast(125%) brightness(105%) saturate(115%)">
+            </div>
+            <span>Cinematic</span>
+          </div>
+
+          <!-- Preset: Stadium Glow -->
+          <div class="preset-card" data-preset="stadium-glow">
+            <div class="preset-thumb">
+              <img src="fwcwl-logo.jpeg" alt="Stadium Glow" style="filter:contrast(110%) brightness(130%) sepia(20%)">
+            </div>
+            <span>Stadium Glow</span>
+          </div>
+
+          <!-- Preset: Golden Hour -->
+          <div class="preset-card" data-preset="golden-hour">
+            <div class="preset-thumb">
+              <img src="fwcwl-logo.jpeg" alt="Golden Hour" style="filter:contrast(115%) sepia(45%) saturate(140%)">
+            </div>
+            <span>Golden Hour</span>
+          </div>
+
+          <!-- Preset: Epic HDR -->
+          <div class="preset-card" data-preset="epic-hdr">
+            <div class="preset-thumb">
+              <img src="fwcwl-logo.jpeg" alt="Epic HDR" style="filter:contrast(140%) brightness(110%) saturate(135%)">
+            </div>
+            <span>Epic HDR</span>
+          </div>
+
+          <!-- Preset: Film Look -->
+          <div class="preset-card" data-preset="film-look">
+            <div class="preset-thumb">
+              <img src="fwcwl-logo.jpeg" alt="Film Look" style="filter:contrast(95%) sepia(25%) saturate(85%)">
+            </div>
+            <span>Film Look</span>
+          </div>
+
+          <!-- Preset: Drama -->
+          <div class="preset-card" data-preset="drama">
+            <div class="preset-thumb">
+              <img src="fwcwl-logo.jpeg" alt="Drama" style="filter:contrast(150%) brightness(90%) saturate(120%)">
+            </div>
+            <span>Drama ›</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM SHEETS FOR ASSETS & PROPERTIES -->
+    <div id="sheetBackdrop" class="sheet-backdrop"></div>
+
+    <section id="assetSheet" class="bottom-sheet" aria-label="Assets">
+      <div class="sheet-handle"></div>
+      <div class="sheet-head">
+        <b>Creative Tools & Assets</b>
+        <button class="sheet-close" data-close>×</button>
+      </div>
+      <div class="sheet-content">
+        <div class="sheet-tabs">
+          <button class="sheet-tab active" data-tab="templates">Templates</button>
+          <button class="sheet-tab" data-tab="media">Media & Photos</button>
+          <button class="sheet-tab" data-tab="layers">Layer Stack</button>
+        </div>
+        <section data-panel="templates">
+          <div class="editor-search"><input id="editorTemplateSearch" placeholder="Search cricket templates..."></div>
+          <div id="editorTemplateCount" style="font-size:8px;color:#777;margin-bottom:8px"></div>
+          <div id="editorTemplateGrid" class="template-mini-grid"></div>
+        </section>
+        <section data-panel="media" class="hidden">
+          <div class="asset-grid-editor">
+            <button id="uploadImageBtn" class="asset-action"><span><b>＋</b>Upload Photo</span></button>
+            <button class="asset-action" onclick="location.href='media.html'"><span><b>▣</b>Media Browser</span></button>
+            <button class="asset-action" onclick="location.href='brand.html'"><span><b>◇</b>Brand Kit</span></button>
+            <button class="asset-action" id="mediaAddText"><span><b>T</b>Add Title</span></button>
+          </div>
+          <input id="imageInput" type="file" accept="image/*" hidden>
+        </section>
+        <section data-panel="layers" class="hidden">
+          <div id="layerList" class="layer-list"></div>
+        </section>
+      </div>
+    </section>
+
+    <!-- EDIT PROPERTIES SHEET -->
+    <section id="editSheet" class="bottom-sheet" aria-label="Edit Properties">
+      <div class="sheet-handle"></div>
+      <div class="sheet-head">
+        <b id="inspectorTitle">Edit Properties</b>
+        <button class="sheet-close" data-close>×</button>
+      </div>
+      <div class="sheet-content">
+        <div id="inspector"></div>
+        <div class="sheet-footer">
+          <button id="duplicateBtn" class="small-btn">Duplicate</button>
+          <button id="deleteBtn" class="small-btn danger">Delete</button>
+        </div>
+      </div>
+    </section>
+
+    <div id="quickSelected" class="quick-selected">
+      <button id="quickEdit">Edit</button>
+      <button id="quickDuplicate">Duplicate</button>
+      <button id="quickDelete" class="danger">Delete</button>
+    </div>
+
+  </div>
+
+  <script src="templates-data.js?v=27"></script>
+  <script src="poster-editor.js?v=27"></script>
+</body>
+</html>

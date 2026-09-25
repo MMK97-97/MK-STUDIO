@@ -1,11 +1,164 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#05080c"><title>Welcome — MK97 Creative Studio</title><link rel="stylesheet" href="app.css?v=25"></head><body><main class="welcome"><div class="ring"></div><div class="welcome-inner"><img class="welcome-logo" src="assets/MK97.png" alt="MK97"><p>CREATE ELITE CRICKET CONTENT</p><div class="loadbar"><i></i></div><a class="gold-btn" href="index.html">Enter Creative Studio →</a></div></main><script>setTimeout(()=>{if(!document.hidden)location.href='index.html'},3600)</script>
-<script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./sw.js", { updateViaCache: "none" }).catch(() => {});
-}
-window.addEventListener("load", () => {
-  navigator.serviceWorker?.getRegistrations?.().then(regs => {
-    regs.forEach(r => r.update?.());
-  }).catch(() => {});
-});
-</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#040507">
+  <title>Welcome to MK97 Creative Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="app.css?v=26">
+  <style>
+    .welcome-page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 30px 20px 24px;
+      text-align: center;
+      background: 
+        radial-gradient(circle at 50% 20%, rgba(245, 158, 11, 0.25) 0%, transparent 60%),
+        linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(4,5,7,0.98) 85%),
+        url('assets/stadium-intro.png') center/cover no-repeat;
+    }
+    .welcome-logo-box img {
+      width: 130px;
+      margin: 0 auto 10px;
+      filter: drop-shadow(0 0 20px rgba(245, 158, 11, 0.4));
+    }
+    .welcome-brand-text {
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      background: var(--gold-metallic);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 0;
+    }
+    .welcome-subbrand {
+      font-size: 9px;
+      letter-spacing: 0.25em;
+      color: var(--text-muted);
+      font-weight: 800;
+      margin-bottom: 20px;
+    }
+    .welcome-headline {
+      font-size: 28px;
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      margin: 0 0 6px;
+    }
+    .welcome-headline span {
+      background: var(--gold-metallic);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .welcome-script {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      color: var(--gold-mid);
+      font-size: 22px;
+      margin: 10px 0 16px;
+      text-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
+    }
+    .feature-tri-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 20px 0;
+    }
+    .feature-tri-card {
+      padding: 14px 10px;
+      border-radius: var(--radius-lg);
+      background: rgba(14, 18, 25, 0.85);
+      border: 1px solid var(--border-gold);
+      backdrop-filter: blur(14px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .feature-tri-card .ico {
+      font-size: 22px;
+      color: var(--gold-primary);
+    }
+    .feature-tri-card b {
+      font-size: 10px;
+      color: #fff;
+    }
+    .feature-tri-card small {
+      font-size: 7px;
+      color: var(--text-muted);
+    }
+    .welcome-cta {
+      width: 100%;
+      height: 50px;
+      border-radius: var(--radius-xl);
+      background: var(--gold-gradient);
+      color: #050608;
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      border: 0;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 6px 24px rgba(245, 158, 11, 0.45);
+      margin-bottom: 12px;
+    }
+    .welcome-footer-copy {
+      font-size: 9px;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <div class="welcome-page">
+    <div class="welcome-top">
+      <div class="welcome-logo-box">
+        <img src="assets/MK97.png" alt="MK97">
+      </div>
+      <h2 class="welcome-brand-text">MK97</h2>
+      <div class="welcome-subbrand">CREATIVE STUDIO</div>
+
+      <div class="hero-eyebrow">CREATE ELITE</div>
+      <h1 class="welcome-headline">
+        <span>CRICKET</span> CONTENT
+      </h1>
+      <div class="welcome-script">More Than Editing</div>
+    </div>
+
+    <div class="welcome-mid">
+      <div class="feature-tri-grid">
+        <div class="feature-tri-card">
+          <span class="ico">👑</span>
+          <b>PREMIUM TEMPLATES</b>
+          <small>1000+ Ready to Use</small>
+        </div>
+        <div class="feature-tri-card">
+          <span class="ico">🤖</span>
+          <b>AI POWERED TOOLS</b>
+          <small>Edit Smarter, Faster</small>
+        </div>
+        <div class="feature-tri-card">
+          <span class="ico">▧</span>
+          <b>PRO EDITING</b>
+          <small>Posters & Videos</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="welcome-bottom">
+      <a class="welcome-cta" href="index.html">
+        Get Started ›
+      </a>
+      <div class="welcome-footer-copy">
+        Join thousands of creators making epic cricket content
+      </div>
+    </div>
+  </div>
+</body>
+</html>

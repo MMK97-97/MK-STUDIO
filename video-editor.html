@@ -3,166 +3,200 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-  <meta name="theme-color" content="#030405">
+  <meta name="theme-color" content="#040507">
   <title>Video Studio Pro — MK97</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Cinzel:wght@700;900&family=DM+Sans:wght@500;700;800&family=Inter:wght@400;600;700;800&family=Montserrat:wght@700;800;900&family=Oswald:wght@600;700&family=Playfair+Display:wght@700;900&family=Poppins:wght@600;700;800&family=Righteous&family=Russo+One&family=Teko:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="app.css?v=26">
-  <link rel="stylesheet" href="editor.css?v=26">
+  <link rel="stylesheet" href="app.css?v=28">
+  <link rel="stylesheet" href="editor.css?v=28">
 </head>
 <body class="editor-page">
   <div class="editor-shell">
-    <!-- PRO TOPBAR -->
-    <header class="editor-topbar">
-      <div class="topbar-left">
+    
+    <!-- TOPBAR (Images 6 & 9) -->
+    <header class="editor-topbar" style="grid-template-columns:auto 1fr auto;gap:10px">
+      <div style="display:flex;align-items:center;gap:8px">
         <a class="editor-back" href="index.html" aria-label="Back">‹</a>
-        <div class="brand-tag">
-          <span class="pro-chip">PRO</span>
-          <span class="studio-sub">MK97 VIDEO</span>
-        </div>
+        <a class="brand" href="index.html" style="display:flex;align-items:center;gap:6px">
+          <span class="brand-logo" style="width:26px;height:26px"><img src="MK97.png" alt="MK97"></span>
+          <span class="brand-copy" style="line-height:1">
+            <b style="font-size:11px">MK97</b>
+            <small style="font-size:7px">CREATIVE STUDIO</small>
+          </span>
+        </a>
       </div>
 
-      <div class="editor-title">
-        <input id="videoProjectName" value="MK97 Reel Pro" aria-label="Project name" spellcheck="false">
-        <span id="saveStatus" class="save-status">Saved</span>
+      <div style="display:flex;flex-direction:column;justify-content:center">
+        <b style="font-size:12px;font-weight:900;letter-spacing:0.05em;color:#fff">VIDEO EDITOR</b>
+        <small style="font-size:8px;color:var(--text-muted);font-weight:700">Professional Multi-track Editor</small>
       </div>
 
       <div class="editor-actions">
-        <button id="videoUndo" class="editor-btn" title="Undo (Ctrl+Z)">↶</button>
-        <button id="videoRedo" class="editor-btn" title="Redo (Ctrl+Y)">↷</button>
-        <button id="safeZoneBtn" class="editor-btn" title="Toggle TikTok/Reels Safe Margins">🛡 Safe</button>
-        <button id="videoExport" class="editor-btn primary" title="Export High-Res Video">↓ Export</button>
+        <button id="videoExport" class="gold-btn" style="height:34px;padding:0 14px;border-radius:12px;display:flex;align-items:center;gap:6px;font-size:10px;font-weight:900">
+          <span>📤</span>
+          <div style="display:flex;flex-direction:column;align-items:flex-start;line-height:1">
+            <span>Export</span>
+            <small style="font-size:7px;opacity:0.85">4K • 60FPS</small>
+          </div>
+          <span>›</span>
+        </button>
       </div>
     </header>
 
-    <!-- MAIN STUDIO WORKSPACE -->
-    <main class="editor-main video-layout">
-      <!-- PREVIEW & CANVAS AREA -->
-      <section class="video-preview-wrap">
-        <div class="preview-toolbar">
-          <div class="group">
-            <select id="videoFormat" title="Aspect Ratio">
-              <option value="story">9:16 (TikTok / Reels / Shorts)</option>
-              <option value="landscape">16:9 (YouTube / Landscape)</option>
-              <option value="square">1:1 (Instagram Post)</option>
-              <option value="portrait">4:5 (Feed Portrait)</option>
-              <option value="cinema">21:9 (Ultrawide Cinema)</option>
-              <option value="pinterest">2:3 (Pinterest)</option>
-            </select>
-            <select id="previewQuality" title="Preview Resolution">
-              <option value="1">100% Quality</option>
-              <option value="0.75">75% Smooth</option>
-              <option value="0.5">50% Fast</option>
-            </select>
-          </div>
-          <div class="group">
-            <button id="snapGuideToggle" class="active" title="Toggle Smart Snapping Guides">🧲 Snap</button>
-            <button id="canvasFitBtn" title="Fit to Screen">Fit</button>
-            <button id="timelineZoomOut" title="Zoom Out Timeline">−</button>
-            <button id="timelineZoomLabel" title="Reset Zoom">100%</button>
-            <button id="timelineZoomIn" title="Zoom In Timeline">＋</button>
+    <!-- 1. TOP TOOL TABS BAR (Images 6 & 9) -->
+    <nav class="video-top-tabs-bar" aria-label="Editor categories">
+      <button class="v-top-tab active" data-vtab="media"><span>🎞</span>Media</button>
+      <button class="v-top-tab" data-vtab="audio"><span>♫</span>Audio</button>
+      <button class="v-top-tab" data-vtab="text"><span>T</span>Text</button>
+      <button class="v-top-tab" data-vtab="stickers"><span>☺</span>Stickers</button>
+      <button class="v-top-tab" data-vtab="effects"><span>✦</span>Effects</button>
+      <button class="v-top-tab" data-vtab="transitions"><span>⧖</span>Transitions</button>
+      <button class="v-top-tab" data-vtab="filters"><span>☀</span>Filters</button>
+      <button class="v-top-tab" data-vtab="adjust"><span>⚙</span>Adjust</button>
+    </nav>
+
+    <!-- 2. MAIN PREVIEW AREA (Center Player with gold brackets & 4K badge) -->
+    <section class="video-preview-wrap" style="position:relative;flex:1;min-height:220px;max-height:48vh;display:flex;flex-direction:column;overflow:hidden">
+      <div id="videoStage" class="video-preview-framed">
+        
+        <!-- Corner Gold Brackets (Image 6 & 9) -->
+        <div class="corner-bracket corner-tl"></div>
+        <div class="corner-bracket corner-tr"></div>
+        <div class="corner-bracket corner-bl"></div>
+        <div class="corner-bracket corner-br"></div>
+
+        <!-- 4K Resolution Badge -->
+        <div class="video-badge-4k">
+          <span>4K</span>
+          <span style="font-size:7px">▼</span>
+        </div>
+
+        <!-- Video Canvas Container -->
+        <div id="videoCanvasContainer" class="canvas-frame" style="width:100%;height:100%;display:grid;place-items:center">
+          <canvas id="videoCanvas" width="1080" height="1920" style="max-height:100%;width:auto;aspect-ratio:9/16"></canvas>
+          
+          <!-- Smart Snapping Guides -->
+          <div id="guideCenterX" class="guide-line guide-x hidden"></div>
+          <div id="guideCenterY" class="guide-line guide-y hidden"></div>
+
+          <!-- On-Canvas Transform Gizmo -->
+          <div id="transformGizmo" class="transform-gizmo hidden">
+            <div class="gizmo-handle handle-tl" data-handle="tl"></div>
+            <div class="gizmo-handle handle-tr" data-handle="tr"></div>
+            <div class="gizmo-handle handle-bl" data-handle="bl"></div>
+            <div class="gizmo-handle handle-br" data-handle="br"></div>
+            <div class="gizmo-rotate" data-handle="rot"></div>
+            <div class="gizmo-info" id="gizmoInfo">100% • 0°</div>
           </div>
         </div>
 
-        <!-- CANVAS STAGE WITH INTERACTIVE GIZMO -->
-        <div id="videoStage" class="stage">
-          <div id="videoCanvasContainer" class="canvas-frame">
-            <canvas id="videoCanvas" width="1080" height="1920"></canvas>
-            
-            <!-- SAFE ZONE OVERLAY FOR REELS/TIKTOK -->
-            <div id="safeZoneOverlay" class="safe-zone-overlay hidden">
-              <div class="safe-top">Top Header Zone</div>
-              <div class="safe-right">Actions Zone (Likes/Comments)</div>
-              <div class="safe-bottom">Caption & Audio Zone</div>
-            </div>
-
-            <!-- SMART SNAPPING GUIDES -->
-            <div id="guideCenterX" class="guide-line guide-x hidden"></div>
-            <div id="guideCenterY" class="guide-line guide-y hidden"></div>
-
-            <!-- ON-CANVAS TRANSFORM GIZMO -->
-            <div id="transformGizmo" class="transform-gizmo hidden">
-              <div class="gizmo-handle handle-tl" data-handle="tl"></div>
-              <div class="gizmo-handle handle-tr" data-handle="tr"></div>
-              <div class="gizmo-handle handle-bl" data-handle="bl"></div>
-              <div class="gizmo-handle handle-br" data-handle="br"></div>
-              <div class="gizmo-rotate" data-handle="rot"></div>
-              <div class="gizmo-info" id="gizmoInfo">100% • 0°</div>
-            </div>
+        <!-- In-Player Transport Bar (Image 6 & 9) -->
+        <div class="video-inplayer-bar">
+          <button id="inplayerPlayBtn" class="inplayer-play-btn" title="Play / Pause">▶</button>
+          <span id="timeLabel" class="inplayer-time">00:06.28 / 00:28.15</span>
+          
+          <div id="inplayerScrubber" class="inplayer-scrubber">
+            <div id="inplayerScrubberFill" class="inplayer-scrubber-fill"></div>
+            <div id="inplayerScrubberHandle" class="inplayer-scrubber-handle"></div>
           </div>
+
+          <button id="inplayerFsBtn" class="inplayer-fs-btn" title="Fullscreen">⛶</button>
         </div>
+      </div>
+    </section>
 
-        <!-- TRANSPORT BAR -->
-        <div class="transport">
-          <div class="transport-left">
-            <button id="stepStart" title="Jump to Start (Home)">|‹</button>
-            <button id="stepBack" title="Previous Frame (Left Arrow)">‹</button>
-            <button id="playBtn" class="play" title="Play / Pause (Space)">▶</button>
-            <button id="stepForward" title="Next Frame (Right Arrow)">›</button>
-            <button id="stepEnd" title="Jump to End (End)">›|</button>
-          </div>
+    <!-- 3. ACTION STRIP (Quick Operations on Selected Clip) (Image 6 & 9) -->
+    <div class="video-action-strip">
+      <button id="splitBtn" class="action-strip-btn"><span>✂</span>Split</button>
+      <button id="volumeBtn" class="action-strip-btn"><span>🔊</span>Volume</button>
+      <button id="speedBtn" class="action-strip-btn"><span>⏲</span>Speed</button>
+      <button id="animationBtn" class="action-strip-btn"><span>◫</span>Animation</button>
+      <button id="aiEnhanceBtn" class="action-strip-btn"><span>✦</span>AI Enhance</button>
+      <button id="stabilizeBtn" class="action-strip-btn"><span>📷</span>Stabilize</button>
+      <button id="reverseBtn" class="action-strip-btn"><span>↺</span>Reverse</button>
+      <button id="replaceClipBtn" class="action-strip-btn"><span>⇄</span>Replace</button>
+      <button id="moreActionsBtn" class="action-strip-btn"><span>⋮</span>More</button>
+    </div>
 
-          <div class="transport-center">
-            <span id="timeLabel" class="time-label">00:00.00 / 00:15.00</span>
-          </div>
-
-          <div class="transport-right">
-            <button id="loopBtn" class="transport-icon" title="Loop Playback">🔁</button>
-            <div class="audio-meter" title="Master Audio Peak Meter">
-              <div id="audioMeterBar" class="audio-meter-bar"></div>
-            </div>
-            <button id="fullscreenBtn" class="transport-icon" title="Fullscreen Preview (F)">⛶</button>
-          </div>
+    <!-- 4. 5-TRACK MULTI-TRACK TIMELINE (Images 6 & 9) -->
+    <section class="timeline-panel" style="flex:1;overflow:hidden;display:flex;flex-direction:column;background:#05070a">
+      <div id="timelineScroll" class="timeline-scroll" style="flex:1;overflow:auto;position:relative">
+        <div id="ruler" class="ruler"></div>
+        <div id="tracks" class="tracks-container v2-tracks-container">
+          <!-- 5 tracks dynamically rendered here: Video, Text, Effects, Audio, Overlay -->
         </div>
-      </section>
-
-      <!-- ADVANCED MULTI-TRACK TIMELINE -->
-      <section class="timeline-panel">
-        <div class="timeline-top">
-          <div class="group">
-            <button id="splitBtn" class="tl-action" title="Split clip at playhead (S)">✂ Split</button>
-            <button id="duplicateClip" class="tl-action" title="Duplicate clip (Ctrl+D)">⧉ Duplicate</button>
-            <button id="deleteClip" class="tl-action danger" title="Delete selected clip (Del)">✕ Delete</button>
-            <button id="addKeyframeBtn" class="tl-action gold" title="Add / Remove Keyframe at Playhead (K)">◇+ Keyframe</button>
-          </div>
-          <div class="group">
-            <button id="rippleToggle" class="tl-action active" title="Toggle Ripple Editing">⇥⇤ Ripple</button>
-            <button id="magnetToggle" class="tl-action active" title="Toggle Magnetic Snapping">🧲 Magnet</button>
-            <button id="addClipQuick" class="tl-action primary" title="Import Clip">＋ Add Clip</button>
-          </div>
+        <div id="playhead" class="playhead">
+          <div class="playhead-cap"></div>
+          <div class="playhead-line"></div>
         </div>
+        <div id="magnetIndicator" class="magnet-line hidden"></div>
+      </div>
+    </section>
 
-        <div id="timelineScroll" class="timeline-scroll">
-          <div id="ruler" class="ruler"></div>
-          <div id="tracks" class="tracks-container"></div>
-          <div id="playhead" class="playhead">
-            <div class="playhead-cap"></div>
-            <div class="playhead-line"></div>
-          </div>
-          <div id="magnetIndicator" class="magnet-line hidden"></div>
-        </div>
-      </section>
+    <!-- 5. BOTTOM DOCK STRIP (Image 6 & 9) -->
+    <div class="video-bottom-dock-strip">
+      <!-- AI Magic Highlight Button -->
+      <div class="dock-card-btn highlight" id="dockAiMagic" onclick="location.href='ai-tools.html'">
+        <span class="dock-badge-ai">AI</span>
+        <span style="color:var(--gold-mid)">✦</span>
+        <small>AI Magic</small>
+      </div>
+      <div class="dock-card-btn" data-vtool="color">
+        <span>🎨</span>
+        <small>Color Grading</small>
+      </div>
+      <div class="dock-card-btn" data-vtool="filters">
+        <span>🏏</span>
+        <small>Filters</small>
+      </div>
+      <div class="dock-card-btn" data-vtool="effects">
+        <span>💡</span>
+        <small>Effects</small>
+      </div>
+      <div class="dock-card-btn" data-vtool="transitions">
+        <span>💫</span>
+        <small>Transitions</small>
+      </div>
+      <div class="dock-card-btn" data-vtool="speed">
+        <span>🏃</span>
+        <small>Speed Ramps</small>
+      </div>
+      <div class="dock-card-btn" data-vtool="stickers">
+        <span>👑</span>
+        <small>Stickers</small>
+      </div>
+      <div class="dock-card-btn" onclick="location.href='templates.html'">
+        <span>▦</span>
+        <small>Templates</small>
+      </div>
+    </div>
 
-      <!-- CAPCUT-STYLE BOTTOM TOOLS DOCK -->
-      <nav class="video-bottom-tools">
-        <button class="tool-btn" data-vtool="media"><span>▣</span>Media</button>
-        <button class="tool-btn" data-vtool="audio"><span>♫</span>Audio</button>
-        <button class="tool-btn" data-vtool="text"><span>T</span>Text</button>
-        <button class="tool-btn" data-vtool="filters"><span>☀</span>Filters</button>
-        <button class="tool-btn" data-vtool="effects"><span>✦</span>Effects</button>
-        <button class="tool-btn" data-vtool="transitions"><span>⧖</span>Transitions</button>
-        <button class="tool-btn" data-vtool="chroma"><span>✂</span>Chroma</button>
-        <button class="tool-btn" data-vtool="stickers"><span>★</span>Stickers</button>
-        <button class="tool-btn" data-vtool="edit"><span>⚙</span>Edit</button>
-        <button class="tool-btn primary" id="mobileRender"><span>↓</span>Export</button>
-      </nav>
-    </main>
+    <!-- 6. BOTTOM TRANSPORT BAR (Huge Gold Circular Play Button) -->
+    <div class="video-transport-bar-v2">
+      <button id="videoUndo" class="v2-trans-btn" title="Undo">↶</button>
+      <button id="videoRedo" class="v2-trans-btn" title="Redo">↷</button>
+      <button id="stepStart" class="v2-trans-btn" title="Jump to Start">|◀</button>
+      
+      <!-- Huge Glowing Gold Circular Play Button (Image 6 & 9) -->
+      <button id="hugePlayBtn" class="huge-gold-play-btn" title="Play / Pause">▶</button>
+      
+      <button id="stepEnd" class="v2-trans-btn" title="Jump to End">▶|</button>
+      <button id="fitScaleBtn" class="v2-trans-btn" style="font-size:10px;font-weight:800;display:flex;align-items:center;gap:2px">
+        <span>⛶ Fit</span>
+        <span style="font-size:7px">▼</span>
+      </button>
+    </div>
+
+    <!-- HIDDEN MEDIA INPUTS -->
+    <input id="videoMediaInput" type="file" accept="video/*,image/*" hidden multiple>
+    <input id="imageMediaInput" type="file" accept="image/*" hidden multiple>
+    <input id="audioInput" type="file" accept="audio/*" hidden multiple>
 
     <!-- BACKDROP FOR SHEETS & MODALS -->
     <div id="videoBackdrop" class="sheet-backdrop"></div>
 
-    <!-- MAIN ASSET & CREATIVE TOOLS SHEET -->
+    <!-- ASSET DRAWER SHEET -->
     <section id="videoAssetSheet" class="bottom-sheet" aria-label="Media & Creative Tools">
       <div class="sheet-handle"></div>
       <div class="sheet-head">
@@ -177,8 +211,7 @@
           <button class="sheet-tab" data-vtab="filters">Filters & LUTs</button>
           <button class="sheet-tab" data-vtab="effects">Motion FX</button>
           <button class="sheet-tab" data-vtab="transitions">Transitions</button>
-          <button class="sheet-tab" data-vtab="chroma">Chroma Key</button>
-          <button class="sheet-tab" data-vtab="stickers">Stickers & Badges</button>
+          <button class="sheet-tab" data-vtab="stickers">Stickers</button>
         </div>
 
         <!-- 1. MEDIA TAB -->
@@ -189,14 +222,11 @@
             <button id="addVideoText" class="asset-action"><span><b>T</b>Add Title</span></button>
             <button id="importFromPosterBtn" class="asset-action" onclick="location.href='poster-editor.html'"><span><b>▦</b>Poster Studio</span></button>
           </div>
-          <input id="videoMediaInput" type="file" accept="video/*,image/*" hidden multiple>
-          <input id="imageMediaInput" type="file" accept="image/*" hidden multiple>
-          
-          <div class="sheet-subhead">Recent Media & Imported Clips</div>
+          <div class="sheet-subhead">Clips on Timeline</div>
           <div id="videoAssetList" class="layer-list"></div>
         </section>
 
-        <!-- 2. AUDIO & SFX TAB -->
+        <!-- 2. AUDIO TAB -->
         <section data-vpanel="audio" class="hidden">
           <div class="asset-grid-editor">
             <button id="audioUploadBtn" class="asset-action"><span><b>♫</b>Upload Audio</span></button>
@@ -204,13 +234,11 @@
             <button id="addTrapTrackBtn" class="asset-action"><span><b>⚡</b>Trap Beat</span></button>
             <button id="addCinematicTrackBtn" class="asset-action"><span><b>🎻</b>Cinematic</span></button>
           </div>
-          <input id="audioInput" type="file" accept="audio/*" hidden multiple>
-          
-          <div class="sheet-subhead">Pro Sound Effects Library (1-Click Add)</div>
+          <div class="sheet-subhead">Pro Sound Effects Library</div>
           <div class="sfx-grid" id="sfxLibraryGrid"></div>
         </section>
 
-        <!-- 3. TEXT & KINETIC TYPOGRAPHY TAB -->
+        <!-- 3. TEXT TAB -->
         <section data-vpanel="text" class="hidden">
           <div class="sheet-subhead">Kinetic Animated Text Presets</div>
           <div class="text-preset-grid" id="textPresetGrid"></div>
@@ -219,13 +247,13 @@
           <div class="caption-generator-box">
             <p>Generate synchronized word-by-word karaoke style captions across your video timeline automatically.</p>
             <div class="row2">
-              <input id="captionSampleTopic" placeholder="Caption topic or lyrics..." value="FWCWL Finals Match Highlight Reel">
+              <input id="captionSampleTopic" placeholder="Caption topic..." value="FWCWL Finals Match Highlight Reel">
               <button id="generateAutoCaptionsBtn" class="small-btn primary">Generate Captions</button>
             </div>
           </div>
         </section>
 
-        <!-- 4. FILTERS & LUTS TAB -->
+        <!-- 4. FILTERS TAB -->
         <section data-vpanel="filters" class="hidden">
           <div class="sheet-subhead">20+ Cinematic LUTs & Color Grading Presets</div>
           <div class="filter-card-grid" id="filtersCardGrid"></div>
@@ -243,52 +271,16 @@
           <div class="transitions-grid" id="transitionsGrid"></div>
         </section>
 
-        <!-- 7. CHROMA KEY (GREEN SCREEN) TAB -->
-        <section data-vpanel="chroma" class="hidden">
-          <div class="sheet-subhead">Chroma Key & Green Screen Separator</div>
-          <div class="chroma-box" id="chromaControlsBox">
-            <p>Select a video or image overlay clip, then remove its background color seamlessly.</p>
-            <div class="control-row">
-              <label class="control">
-                <span>Key Color</span>
-                <input id="chromaColorPicker" type="color" value="#00ff00">
-              </label>
-              <label class="control">
-                <span>Preset</span>
-                <select id="chromaPresetSelect">
-                  <option value="#00ff00">Green Screen</option>
-                  <option value="#0000ff">Blue Screen</option>
-                  <option value="#000000">Black Backdrop</option>
-                  <option value="#ffffff">White Backdrop</option>
-                </select>
-              </label>
-            </div>
-            <label class="control">
-              <span>Tolerance / Similarity</span>
-              <input id="chromaTolerance" type="range" min="5" max="95" value="38">
-            </label>
-            <label class="control">
-              <span>Feather / Smoothness</span>
-              <input id="chromaFeather" type="range" min="0" max="50" value="15">
-            </label>
-            <label class="control">
-              <span>Spill Reduction</span>
-              <input id="chromaSpill" type="range" min="0" max="100" value="40">
-            </label>
-            <button id="applyChromaToClipBtn" class="small-btn primary" style="width:100%;margin-top:10px">Apply Chroma Key to Clip</button>
-          </div>
-        </section>
-
-        <!-- 8. STICKERS & BADGES TAB -->
+        <!-- 7. STICKERS TAB -->
         <section data-vpanel="stickers" class="hidden">
-          <div class="sheet-subhead">Social & Cricket Overlay Badges</div>
+          <div class="sheet-subhead">Cricket & Creator Badges</div>
           <div class="stickers-grid" id="stickersGrid"></div>
         </section>
       </div>
     </section>
 
     <!-- CLIP INSPECTOR & PROPERTIES SHEET -->
-    <section id="videoEditSheet" class="bottom-sheet" aria-label="Clip Properties & Keyframes">
+    <section id="videoEditSheet" class="bottom-sheet" aria-label="Clip Properties">
       <div class="sheet-handle"></div>
       <div class="sheet-head">
         <b id="clipTitle">Clip Properties</b>
@@ -297,7 +289,7 @@
       <div id="videoInspector" class="sheet-content"></div>
     </section>
 
-    <!-- ULTRA HD EXPORT MODAL -->
+    <!-- EXPORT MODAL -->
     <section id="exportModal" class="export-modal hidden">
       <div class="modal-card">
         <div class="modal-head">
@@ -309,16 +301,16 @@
             <div class="export-opt">
               <label>Resolution</label>
               <select id="exportRes">
+                <option value="2160" selected>4K Ultra HD (2160×3840)</option>
                 <option value="1080">1080p Full HD (1080×1920)</option>
-                <option value="2160">4K Ultra HD (2160×3840)</option>
                 <option value="720">720p HD (720×1280)</option>
               </select>
             </div>
             <div class="export-opt">
               <label>Frame Rate</label>
               <select id="exportFps">
+                <option value="60" selected>60 FPS (Ultra Smooth)</option>
                 <option value="30">30 FPS (Standard)</option>
-                <option value="60">60 FPS (Ultra Smooth)</option>
                 <option value="24">24 FPS (Cinematic Film)</option>
               </select>
             </div>
@@ -333,11 +325,10 @@
 
           <div class="render-info-box">
             <div class="info-item"><span>Duration:</span><b id="expDuration">15.0s</b></div>
-            <div class="info-item"><span>Est. Size:</span><b id="expEstSize">~12 MB</b></div>
+            <div class="info-item"><span>Est. Size:</span><b id="expEstSize">~28 MB</b></div>
             <div class="info-item"><span>Aspect:</span><b id="expAspect">9:16 Reel</b></div>
           </div>
 
-          <!-- PROGRESS BAR DURING RENDERING -->
           <div id="exportProgressContainer" class="export-progress hidden">
             <div class="progress-bar-wrap">
               <div id="exportProgressBar" class="progress-bar-fill"></div>
@@ -351,14 +342,15 @@
 
           <div class="modal-foot">
             <button id="cancelExportBtn" class="small-btn danger hidden">Cancel</button>
-            <button id="startRenderBtn" class="gold-btn" style="width:100%">Start Rendering</button>
+            <button id="startRenderBtn" class="gold-btn" style="width:100%">Start 4K Rendering</button>
           </div>
         </div>
       </div>
     </section>
+
   </div>
 
-  <script src="templates-data.js?v=26"></script>
-  <script src="video-editor.js?v=26"></script>
+  <script src="templates-data.js?v=28"></script>
+  <script src="video-editor.js?v=28"></script>
 </body>
 </html>
