@@ -425,9 +425,17 @@
     }
 
     // Render visual clips by track order (bottom to top)
-    const trackOrder = ['Video', 'Overlay 1', 'Overlay 2', 'Text'];
-    const visualClips = active.filter(c => trackOrder.includes(c.track));
-    visualClips.sort((a, b) => trackOrder.indexOf(a.track) - trackOrder.indexOf(b.track));
+    const trackOrder = ['Video', 'Overlay 1', 'Overlay 2', 'Overlay', 'Effects', 'Text'];
+    const visualClips = active.filter(c => {
+      const tr = state.tracks.find(t => t.id === c.track);
+      if (tr && tr.visible === false) return false;
+      return trackOrder.includes(c.track) || c.kind === 'video' || c.kind === 'image' || c.kind === 'text' || c.kind === 'sticker' || c.kind === 'overlay';
+    });
+    visualClips.sort((a, b) => {
+      const idxA = trackOrder.indexOf(a.track);
+      const idxB = trackOrder.indexOf(b.track);
+      return (idxA === -1 ? 99 : idxA) - (idxB === -1 ? 99 : idxB);
+    });
 
     for (const c of visualClips) {
       const localTime = (state.time - c.start) * (c.speed || 1);
@@ -546,6 +554,40 @@
 
         ctx.fillStyle = c.color || '#ffffff';
         ctx.fillText(displayText, 0, 0, state.w * 0.9);
+      }
+
+      // 4. OVERLAYS & PARTICLES
+      if (c.kind === 'overlay' || c.kind === 'effects') {
+        if (/particle|ember/i.test(c.name)) {
+          ctx.save();
+          ctx.fillStyle = 'rgba(255, 215, 0, 0.45)';
+          for (let p = 0; p < 35; p++) {
+            const px = ((p * 97 + state.time * 60) % state.w);
+            const py = (state.h - ((p * 131 + state.time * 80) % state.h));
+            const pr = 2 + (p % 4);
+            ctx.beginPath();
+            ctx.arc(px, py, pr, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.restore();
+        } else if (/leak|flare|glow/i.test(c.name)) {
+          ctx.save();
+          const grad = ctx.createRadialGradient(state.w * 0.8, 0, 10, state.w * 0.8, 0, state.w * 0.7);
+          grad.addColorStop(0, 'rgba(243, 201, 91, 0.35)');
+          grad.addColorStop(0.5, 'rgba(0, 210, 255, 0.15)');
+          grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, state.w, state.h);
+          ctx.restore();
+        } else if (/smoke/i.test(c.name)) {
+          ctx.save();
+          const grad = ctx.createLinearGradient(0, state.h * 0.6, 0, state.h);
+          grad.addColorStop(0, 'rgba(0,0,0,0)');
+          grad.addColorStop(1, 'rgba(20, 28, 40, 0.45)');
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, state.h * 0.6, state.w, state.h * 0.4);
+          ctx.restore();
+        }
       }
 
       ctx.restore();
@@ -1319,9 +1361,44 @@
   }
 
   timeline.addEventListener('pointerdown', e => {
-    if (e.target.closest('.clip')) return;
+    if (e.target.closest('.clip, .v2-track-header, .track-add-btn-round, .transition-diamond-btn')) return;
     isScrubbing = true;
     handleTimelineScrub(e.clientX);
+  });
+
+  $('#tracks')?.addEventListener('click', e => {
+    const visBtn = e.target.closest('[data-act="track-vis"]');
+    if (visBtn) {
+      const tid = visBtn.dataset.tid;
+      const track = state.tracks.find(t => t.id === tid);
+      if (track) {
+        pushState();
+        track.visible = track.visible === false ? true : false;
+        visBtn.textContent = track.visible ? '👁' : '⊘';
+        visBtn.classList.toggle('muted', !track.visible);
+        renderTracks();
+        renderPreview();
+        toast(`${track.name} ${track.visible ? 'visible' : 'muted'}`);
+      }
+      return;
+    }
+    const addBtn = e.target.closest('.track-add-btn-round');
+    if (addBtn) {
+      const trackRow = addBtn.closest('.v2-track-row');
+      const tid = trackRow?.dataset.track || 'Video';
+      if (tid === 'Video') $('#videoMediaInput')?.click();
+      else if (tid === 'Text') addTextClip();
+      else if (tid === 'Effects') openAssetTab('effects');
+      else if (tid === 'Audio') openAssetTab('audio');
+      else openAssetTab('media');
+      return;
+    }
+    const transBtn = e.target.closest('.transition-diamond-btn');
+    if (transBtn) {
+      openAssetTab('transitions');
+      toast('Select transition effect');
+      return;
+    }
   });
 
   window.addEventListener('pointermove', e => {
@@ -1424,7 +1501,7 @@
   // --- Transport & Playback Engine ---
   function play() {
     state.playing = !state.playing;
-    $('#playBtn').textContent = state.playing ? '❚❚' : '▶';
+    updateTimeDisplay();
 
     if (!state.playing) {
       cancelAnimationFrame(raf);
@@ -1451,7 +1528,7 @@
         } else {
           state.time = state.duration;
           state.playing = false;
-          $('#playBtn').textContent = '▶';
+          updateTimeDisplay();
           if (meter) meter.style.width = '0%';
         }
       }
@@ -1508,7 +1585,7 @@
         const blob = new Blob(chunks, { type: mimeType });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = `${($('#videoProjectName').value || 'MK97-Pro-Video').replace(/[^\w-]+/g, '-')}-${outW}p.webm`;
+        a.download = `${($('#videoProjectName')?.value || 'MK97-Pro-Video').replace(/[^\w-]+/g, '-')}-${outW}p.webm`;
         a.click();
         setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 
@@ -1861,34 +1938,47 @@
   if ($('#videoBackdrop')) $('#videoBackdrop').onclick = closeSheets;
 
   // Upload Handlers
-  if ($('#videoUploadBtn')) $('#videoUploadBtn').onclick = () => $('#videoMediaInput').click();
-  if ($('#imageUploadBtn')) $('#imageUploadBtn').onclick = () => $('#imageMediaInput').click();
-  if ($('#audioUploadBtn')) $('#audioUploadBtn').onclick = () => $('#audioInput').click();
+  // Upload Handlers
+  if ($('#videoUploadBtn')) $('#videoUploadBtn').onclick = () => $('#videoMediaInput')?.click();
+  if ($('#imageUploadBtn')) $('#imageUploadBtn').onclick = () => $('#imageMediaInput')?.click();
+  if ($('#audioUploadBtn')) $('#audioUploadBtn').onclick = () => $('#audioInput')?.click();
   if ($('#addVideoText')) $('#addVideoText').onclick = () => addTextClip();
 
-  $('#videoMediaInput').onchange = e => {
-    [...e.target.files].forEach(f => addMediaFile(f));
-  };
-  $('#imageMediaInput').onchange = e => {
-    [...e.target.files].forEach(f => addMediaFile(f));
-  };
-  $('#audioInput').onchange = e => {
-    [...e.target.files].forEach(f => addMediaFile(f));
-  };
+  if ($('#videoMediaInput')) {
+    $('#videoMediaInput').onchange = e => {
+      [...e.target.files].forEach(f => addMediaFile(f));
+    };
+  }
+  if ($('#imageMediaInput')) {
+    $('#imageMediaInput').onchange = e => {
+      [...e.target.files].forEach(f => addMediaFile(f));
+    };
+  }
+  if ($('#audioInput')) {
+    $('#audioInput').onchange = e => {
+      [...e.target.files].forEach(f => addMediaFile(f));
+    };
+  }
 
   // Preset Beat Buttons
-  $('#addBeatTrackBtn').onclick = () => {
-    addSFXClip('bassdrop');
-    toast('Lofi beat pulse added');
-  };
-  $('#addTrapTrackBtn').onclick = () => {
-    addSFXClip('hit');
-    toast('Trap punch added');
-  };
-  $('#addCinematicTrackBtn').onclick = () => {
-    addSFXClip('whoosh');
-    toast('Cinematic swell added');
-  };
+  if ($('#addBeatTrackBtn')) {
+    $('#addBeatTrackBtn').onclick = () => {
+      addSFXClip('bassdrop');
+      toast('Lofi beat pulse added');
+    };
+  }
+  if ($('#addTrapTrackBtn')) {
+    $('#addTrapTrackBtn').onclick = () => {
+      addSFXClip('hit');
+      toast('Trap punch added');
+    };
+  }
+  if ($('#addCinematicTrackBtn')) {
+    $('#addCinematicTrackBtn').onclick = () => {
+      addSFXClip('whoosh');
+      toast('Cinematic swell added');
+    };
+  }
 
   // Chroma Key Tab Application
   $('#applyChromaToClipBtn')?.addEventListener('click', () => {

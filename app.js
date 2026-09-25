@@ -16,8 +16,14 @@ function toast(msg){
 window.MK97={store,toast,templates:T,bump(k){const a=store.get('mk97.analytics',{templatesUsed:0,exports:0,projects:0,aiActions:0,videoEdits:0});a[k]=(a[k]||0)+1;store.set('mk97.analytics',a)}};
 function nav(){
  const active=document.body.dataset.nav||'';
- const items=[['index.html','⌂','Home','home',''],['templates.html','▦','Templates','templates',''],['poster-editor.html','＋','Create','create','create'],['projects.html','▧','Projects','projects',''],['analytics.html','📊','Analytics','analytics','']];
- return `<nav class="bottomnav">${items.map(([h,i,l,k,c])=>`<a href="${h}" class="navitem ${active===k?'active':''} ${c}"><span>${i}</span>${l}</a>`).join('')}</nav>`;
+ const items=[
+   ['index.html','⌂','Home','home',''],
+   ['templates.html','▦','Templates','templates',''],
+   ['#create','＋','Create','create','create'],
+   ['projects.html','▧','Projects','projects',''],
+   ['analytics.html','📊','Analytics','analytics','']
+ ];
+ return `<nav class="bottomnav">${items.map(([h,i,l,k,c])=>`<a href="${h}" class="navitem ${active===k?'active':''} ${c}" ${c==='create'?'data-open-create':''}><span>${i}</span>${l}</a>`).join('')}</nav>`;
 }
 $$('[data-bottomnav]').forEach(x=>x.innerHTML=nav());
 function templateCard(t){
@@ -104,4 +110,91 @@ if($('#analyticsMetrics')){
  $('#analyticsMetrics').innerHTML=[['Templates Used',a.templatesUsed],['Exports',a.exports],['Saved Projects',a.projects],['AI Actions',a.aiActions]].map(([l,v])=>`<div class="metric"><strong>${v||0}</strong><span>${l}</span></div>`).join('');
 }
 if($('#saveSchedule'))$('#saveSchedule').onclick=()=>{store.set('mk97.schedule',{date:$('#scheduleDate').value,time:$('#scheduleTime').value,platform:$('#schedulePlatform').value});toast('Schedule saved locally')};
+
+// Studio Selector Modal (POSTER EDITOR <> VIDEO EDITOR)
+function initStudioModal() {
+  if ($('#createStudioModal')) return;
+  const modal = document.createElement('div');
+  modal.id = 'createStudioModal';
+  modal.className = 'create-select-modal';
+  modal.setAttribute('role', 'dialog');
+  modal.setAttribute('aria-modal', 'true');
+  modal.innerHTML = `
+    <div class="create-modal-backdrop"></div>
+    <div class="create-modal-card">
+      <button class="create-modal-close" id="closeStudioModal" aria-label="Close">✕</button>
+      <div class="create-modal-header">
+        <div class="create-modal-badge">✨ MK97 CREATIVE WORKSPACE</div>
+        <h2 class="create-modal-title">Create New Project</h2>
+        <p class="create-modal-sub">Choose your creative workspace to begin</p>
+      </div>
+
+      <div class="create-studio-grid">
+        <!-- 1. POSTER EDITOR -->
+        <a href="poster-editor.html" class="studio-option-card poster-card" id="selectPosterStudio">
+          <div class="studio-option-badge">GRAPHICS & FLYERS</div>
+          <div class="studio-option-icon">🎨</div>
+          <h3 class="studio-option-title">POSTER EDITOR</h3>
+          <p class="studio-option-desc">Matchday graphics, tournament flyers, player cutouts, high-intensity stadium lights & pro typography.</p>
+          <div class="studio-option-tags">
+            <span>1:1 Post</span>
+            <span>9:16 Story</span>
+            <span>4:5 Card</span>
+            <span>Ultra HD</span>
+          </div>
+          <div class="studio-option-btn">
+            <span>Open Poster Studio</span>
+            <span class="arrow">›</span>
+          </div>
+        </a>
+
+        <!-- 2. VIDEO EDITOR -->
+        <a href="video-editor.html" class="studio-option-card video-card" id="selectVideoStudio">
+          <div class="studio-option-badge">MULTI-TRACK 4K</div>
+          <div class="studio-option-icon">🎬</div>
+          <h3 class="studio-option-title">VIDEO EDITOR</h3>
+          <p class="studio-option-desc">Multi-track timeline, keyframing, beat sync, cinematic filters, auto captions & 4K 60FPS export.</p>
+          <div class="studio-option-tags">
+            <span>Multi-track</span>
+            <span>Keyframes</span>
+            <span>Auto Captions</span>
+            <span>60 FPS</span>
+          </div>
+          <div class="studio-option-btn">
+            <span>Open Video Studio</span>
+            <span class="arrow">›</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="create-modal-foot">
+        <span>Need ready-made designs?</span>
+        <a href="templates.html" class="foot-templates-link">Browse 170+ Cricket Templates ›</a>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  const close = () => modal.classList.remove('open');
+  modal.querySelector('.create-modal-backdrop').onclick = close;
+  modal.querySelector('#closeStudioModal').onclick = close;
+  window.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && modal.classList.contains('open')) close();
+  });
+}
+
+function openCreateModal() {
+  initStudioModal();
+  $('#createStudioModal').classList.add('open');
+}
+
+window.MK97.openCreateModal = openCreateModal;
+
+document.addEventListener('click', e => {
+  const trigger = e.target.closest('[data-open-create], a[href="#create"], .gold-cta-btn, #heroCreateBtn');
+  if (trigger) {
+    e.preventDefault();
+    openCreateModal();
+  }
+});
 })();
