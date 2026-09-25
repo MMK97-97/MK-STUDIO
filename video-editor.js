@@ -1209,15 +1209,118 @@
     }
   });
 
-  // Timeline Scrubbing on Click/Drag
-  timeline.addEventListener('pointerdown', e => {
-    if (e.target.closest('.clip')) return;
-    const lane = e.target.closest('.track-lane') || e.target.closest('.ruler');
-    if (!lane) return;
-    const r = lane.getBoundingClientRect();
-    state.time = clamp((e.clientX - r.left) / pxPerSec(), 0, state.duration);
+  // --- Real-time Continuous Timeline Scrubbing ---
+  let isScrubbing = false;
+  function handleTimelineScrub(clientX) {
+    const tracksContainer = $('#tracks');
+    if (!tracksContainer) return;
+    const r = tracksContainer.getBoundingClientRect();
+    state.time = clamp((clientX - r.left) / pxPerSec(), 0, state.duration);
     renderPreview();
     updateTimeDisplay();
+  }
+
+  timeline.addEventListener('pointerdown', e => {
+    if (e.target.closest('.clip')) return;
+    isScrubbing = true;
+    handleTimelineScrub(e.clientX);
+  });
+
+  window.addEventListener('pointermove', e => {
+    if (!isScrubbing) return;
+    handleTimelineScrub(e.clientX);
+  });
+
+  window.addEventListener('pointerup', () => {
+    if (isScrubbing) {
+      isScrubbing = false;
+      saveProject();
+    }
+  });
+
+  // --- Real-Time On-Canvas Transform Gizmo Manipulation ---
+  const gizmoEl = $('#transformGizmo');
+  let gizmoActive = null;
+
+  gizmoEl?.addEventListener('pointerdown', e => {
+    e.stopPropagation();
+    const c = selectedClip();
+    if (!c) return;
+
+    const handle = e.target.dataset.handle;
+    const container = $('#videoCanvasContainer');
+    const scaleFactor = container.clientWidth / state.w;
+    pushState();
+
+    gizmoActive = {
+      type: handle || 'move',
+      startX: e.clientX,
+      startY: e.clientY,
+      origX: c.x || 0,
+      origY: c.y || 0,
+      origScale: c.scale != null ? c.scale : 1,
+      origRot: c.rotation || 0,
+      scaleFactor,
+      clip: c
+    };
+    gizmoEl.setPointerCapture(e.pointerId);
+  });
+
+  window.addEventListener('pointermove', e => {
+    if (!gizmoActive) return;
+    const { type, startX, startY, origX, origY, origScale, origRot, scaleFactor, clip } = gizmoActive;
+    const dx = (e.clientX - startX) / scaleFactor;
+    const dy = (e.clientY - startY) / scaleFactor;
+
+    const guideX = $('#guideCenterX');
+    const guideY = $('#guideCenterY');
+
+    if (type === 'move') {
+      let nx = Math.round(origX + dx);
+      let ny = Math.round(origY + dy);
+
+      // Snap to center guidelines
+      if (Math.abs(nx) < 14) {
+        nx = 0;
+        guideX?.classList.remove('hidden');
+      } else {
+        guideX?.classList.add('hidden');
+      }
+
+      if (Math.abs(ny) < 14) {
+        ny = 0;
+        guideY?.classList.remove('hidden');
+      } else {
+        guideY?.classList.add('hidden');
+      }
+
+      clip.x = nx;
+      clip.y = ny;
+    } else if (type === 'rot') {
+      const container = $('#videoCanvasContainer');
+      const cr = container.getBoundingClientRect();
+      const centerX = cr.left + cr.width / 2 + (clip.x || 0) * scaleFactor;
+      const centerY = cr.top + cr.height / 2 + (clip.y || 0) * scaleFactor;
+      const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * (180 / Math.PI) + 90;
+      clip.rotation = Math.round(angle);
+    } else {
+      // Corner scaling
+      const dist = Math.hypot(dx, dy);
+      const sign = (dx > 0 || dy > 0) ? 1 : -1;
+      const newScale = clamp(origScale + (sign * dist) / 400, 0.1, 4.0);
+      clip.scale = Number(newScale.toFixed(2));
+    }
+
+    renderPreview();
+  });
+
+  window.addEventListener('pointerup', () => {
+    if (gizmoActive) {
+      gizmoActive = null;
+      $('#guideCenterX')?.classList.add('hidden');
+      $('#guideCenterY')?.classList.add('hidden');
+      saveProject();
+    }
   });
 
   // --- Transport & Playback Engine ---
