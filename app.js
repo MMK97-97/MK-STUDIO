@@ -39,12 +39,16 @@ if(grid){
  render();
 }
 if($('#templateDetail')){
- const id=new URLSearchParams(location.search).get('id')||store.get('mk97.selectedTemplate','match-day');
+ const id=new URLSearchParams(location.search).get('id')||store.get('mk97.selectedTemplate','fwcwl-matchday-broadcast');
  const t=T.find(x=>x.id===id)||T[0];
  if(t){
    $('#detailName').textContent=t.name;$('#detailCategory').textContent=t.category.toUpperCase();
    $('#detailPreview').innerHTML=templateCard(t);
-   $('#useTemplate').addEventListener('click',()=>{store.set('mk97.selectedTemplate',t.id);window.MK97.bump('templatesUsed')});
+   const useBtn=$('#useTemplate');
+   if(useBtn){
+     useBtn.href='poster-editor.html?id='+encodeURIComponent(t.id);
+     useBtn.addEventListener('click',()=>{store.set('mk97.selectedTemplate',t.id);window.MK97.bump('templatesUsed')});
+   }
    $('#similarTemplates').innerHTML=T.filter(x=>x.category===t.category&&x.id!==t.id).slice(0,4).map(templateCard).join('');
  }
 }

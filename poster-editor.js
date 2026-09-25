@@ -16,16 +16,29 @@ function redo(){if(!future.length)return;history.push(clone(state));state=future
 function fontName(f){return /bebas/i.test(f)?'Impact':/playfair/i.test(f)?'Georgia':'Arial'}
 
 function defaultTemplate(t){
-  state.templateId=t.id;state.bg=t.palette[0];
-  state.layers=[
-    {id:uid(),type:'shape',name:'Gold Accent',x:720,y:80,w:400,h:1350,color:t.palette[1],opacity:.86,rotation:-12,visible:true,locked:false},
-    {id:uid(),type:'image',name:'Player Batter',src:'fwcwl-logo.jpeg',x:160,y:260,w:760,h:760,opacity:1,rotation:0,visible:true,locked:false,brightness:105,contrast:125,saturation:115,hue:0,blur:0,sepia:0},
-    {id:uid(),type:'text',name:'Category Tag',text:t.kicker||'MATCH DAY',x:80,y:120,w:850,h:70,font:fontName(t.font),size:42,weight:900,color:t.palette[2]||'#f59e0b',align:t.align||'left',opacity:1,rotation:0,visible:true,locked:false},
-    {id:uid(),type:'text',name:'Match Headline',text:t.title||'MATCH DAY',x:80,y:480,w:880,h:390,font:fontName(t.font),size:Math.min(170,t.titleSize||130),weight:900,color:t.titleColor||'#ffffff',align:t.align||'left',opacity:1,rotation:0,visible:true,locked:false,stroke:'#000000',strokeWidth:3,shadow:20},
-    {id:uid(),type:'text',name:'Match Details',text:t.detail||'FWCWL FINALS • LIVE AT 7:30 PM',x:80,y:1050,w:870,h:80,font:'Arial',size:36,weight:800,color:t.detailColor||'#d2d8dd',align:t.align||'left',opacity:1,rotation:0,visible:true,locked:false},
-    {id:uid(),type:'text',name:'Watermark',text:t.cta||'MK97 CREATIVE STUDIO',x:80,y:1230,w:860,h:70,font:'Arial',size:28,weight:900,color:t.footerColor||t.palette[2],align:t.align||'left',opacity:1,rotation:0,visible:true,locked:false}
-  ];
-  state.selected=state.layers[3].id;
+  state.templateId=t.id;
+  state.bg=t.palette?.[0]||'#0a0e13';
+  const aspect=t.aspect||'portrait';
+  const dim=sizes[aspect]||sizes.portrait;
+  state.w=dim[0];
+  state.h=dim[1];
+  const sizeSelect=$('#canvasSize');
+  if(sizeSelect) sizeSelect.value=aspect;
+
+  if(Array.isArray(t.customLayers) && t.customLayers.length){
+    state.layers=t.customLayers.map(l=>Object.assign({}, l, {id:uid()}));
+    state.selected=state.layers[state.layers.length-1]?.id||null;
+  } else {
+    state.layers=[
+      {id:uid(),type:'shape',name:'Accent Glow',x:Math.round(state.w*0.6),y:80,w:Math.round(state.w*0.4),h:state.h,color:t.palette?.[1]||'#1e293b',opacity:.86,rotation:-12,visible:true,locked:false},
+      {id:uid(),type:'image',name:'FWCWL Feature',src:t.logo||'fwcwl-logo.jpeg',x:Math.round(state.w*0.15),y:Math.round(state.h*0.2),w:Math.round(state.w*0.7),h:Math.round(state.h*0.45),opacity:1,rotation:0,visible:true,locked:false,brightness:105,contrast:125,saturation:115,hue:0,blur:0,sepia:0},
+      {id:uid(),type:'text',name:'Category Tag',text:t.kicker||'FWCWL • MATCH DAY',x:80,y:80,w:state.w-160,h:60,font:fontName(t.font),size:36,weight:900,color:t.kickerColor||t.palette?.[2]||'#f59e0b',align:t.align||'left',opacity:1,rotation:0,visible:true,locked:false},
+      {id:uid(),type:'text',name:'Match Headline',text:t.title||'MATCH DAY',x:80,y:Math.round(state.h*0.35),w:state.w-160,h:320,font:fontName(t.font),size:Math.min(160,t.titleSize||120),weight:900,color:t.titleColor||'#ffffff',align:t.align||'left',opacity:1,rotation:0,visible:true,locked:false,stroke:'#000000',strokeWidth:3,shadow:20},
+      {id:uid(),type:'text',name:'Match Details',text:t.detail||'FWCWL FINALS • LIVE AT 7:30 PM',x:80,y:state.h-240,w:state.w-160,h:80,font:'Arial',size:32,weight:800,color:t.detailColor||'#d2d8dd',align:t.align||'left',opacity:1,rotation:0,visible:true,locked:false},
+      {id:uid(),type:'text',name:'Watermark',text:t.cta||'FWCWL • MK97 STUDIO',x:80,y:state.h-120,w:state.w-160,h:60,font:'Arial',size:26,weight:900,color:t.footerColor||t.palette?.[2]||'#f59e0b',align:t.align||'left',opacity:1,rotation:0,visible:true,locked:false}
+    ];
+    state.selected=state.layers[3].id;
+  }
   syncAll();
 }
 
@@ -46,14 +59,34 @@ function drawText(l){
 
 function drawLayer(l){
   if(l.visible===false)return;
-  if(l.type==='shape'){ctx.save();ctx.globalAlpha=l.opacity??1;ctx.translate(l.x+l.w/2,l.y+l.h/2);ctx.rotate((l.rotation||0)*Math.PI/180);ctx.fillStyle=l.color||'#fff';ctx.fillRect(-l.w/2,-l.h/2,l.w,l.h);ctx.restore()}
+  if(l.type==='shape'){
+    ctx.save();ctx.globalAlpha=l.opacity??1;
+    ctx.translate(l.x+l.w/2,l.y+l.h/2);
+    ctx.rotate((l.rotation||0)*Math.PI/180);
+    ctx.fillStyle=l.color||'#fff';
+    ctx.fillRect(-l.w/2,-l.h/2,l.w,l.h);
+    if(l.strokeColor && l.strokeWidth){
+      ctx.lineWidth=l.strokeWidth;
+      ctx.strokeStyle=l.strokeColor;
+      ctx.strokeRect(-l.w/2,-l.h/2,l.w,l.h);
+    }
+    ctx.restore();
+  }
   if(l.type==='text')drawText(l);
   if(l.type==='image'){
     const im=getImage(l.src);if(!im.complete)return;
-    ctx.save();ctx.globalAlpha=l.opacity??1;ctx.translate(l.x+l.w/2,l.y+l.h/2);ctx.rotate((l.rotation||0)*Math.PI/180);
+    ctx.save();ctx.globalAlpha=l.opacity??1;
+    ctx.translate(l.x+l.w/2,l.y+l.h/2);
+    ctx.rotate((l.rotation||0)*Math.PI/180);
     ctx.filter=`brightness(${l.brightness||100}%) contrast(${l.contrast||100}%) saturate(${l.saturation||100}%) blur(${l.blur||0}px) hue-rotate(${l.hue||0}deg) sepia(${l.sepia||0}%)`;
     const r=Math.max(l.w/im.naturalWidth,l.h/im.naturalHeight),dw=im.naturalWidth*r,dh=im.naturalHeight*r;
-    ctx.beginPath();ctx.rect(-l.w/2,-l.h/2,l.w,l.h);ctx.clip();ctx.drawImage(im,-dw/2,-dh/2,dw,dh);ctx.restore();
+    ctx.beginPath();ctx.rect(-l.w/2,-l.h/2,l.w,l.h);ctx.clip();ctx.drawImage(im,-dw/2,-dh/2,dw,dh);
+    if(l.borderColor && l.borderWidth){
+      ctx.lineWidth=l.borderWidth;
+      ctx.strokeStyle=l.borderColor;
+      ctx.strokeRect(-l.w/2,-l.h/2,l.w,l.h);
+    }
+    ctx.restore();
   }
 }
 
@@ -452,7 +485,8 @@ window.addEventListener('keydown',e=>{
 renderTemplates();
 
 // Initial load
-const chosen=T.find(x=>x.id===store.get('mk97.selectedTemplate','match-day'))||T[0];
+const urlId=new URLSearchParams(location.search).get('id');
+const chosen=T.find(x=>x.id===(urlId||store.get('mk97.selectedTemplate','fwcwl-matchday-broadcast')))||T.find(x=>x.id==='fwcwl-matchday-broadcast')||T[0];
 defaultTemplate(chosen);
 
 // Check if loaded from AI Match Poster Generator
