@@ -21,11 +21,30 @@ function nav(){
 }
 $$('[data-bottomnav]').forEach(x=>x.innerHTML=nav());
 function templateCard(t){
- return `<a class="template-box-card" href="template-detail.html?id=${encodeURIComponent(t.id)}">
-  <div class="template-box-art" style="--a:${t.palette[0]};--b:${t.palette[1]}">
-   <span class="template-crown">👑</span>
-   <div class="template-box-caption"><small>${esc(t.kicker)}</small><h4>${esc(t.title)}</h4></div>
-  </div><div class="template-box-meta"><strong>${esc(t.name)}</strong><span>${esc(t.category)}</span></div></a>`;
+ const logoSrc = esc(t.logo || 'fwcwl-logo.jpeg');
+ const aspectTag = t.aspect === 'square' ? '1:1 POST' : (t.aspect === 'story' ? '9:16 FLYER' : '4:5 CARD');
+ const titleHtml = esc(t.title || t.name).replaceAll('\n', '<br>');
+ return `<a class="template-box-card" href="template-detail.html?id=${encodeURIComponent(t.id)}" title="${esc(t.name)}">
+  <div class="template-box-art" style="--a:${t.palette?.[0]||'#08121e'};--b:${t.palette?.[1]||'#1e293b'}">
+   <div class="card-top-row">
+    <img class="card-logo" src="${logoSrc}" alt="FWCWL">
+    <span class="card-kicker-pill">${esc(t.kicker||'FWCWL')}</span>
+    <span class="template-crown">👑</span>
+   </div>
+   <div class="card-center-stage">
+    <div class="card-main-title">${titleHtml}</div>
+    <div class="card-sub-info">${esc(t.detail||'')}</div>
+   </div>
+   <div class="card-bottom-pill">
+    <span>${aspectTag}</span>
+    <span>★ PRO</span>
+   </div>
+  </div>
+  <div class="template-box-meta">
+   <strong>${esc(t.name)}</strong>
+   <span class="meta-tag">${esc((t.category||'cricket').toUpperCase())}</span>
+  </div>
+ </a>`;
 }
 window.MK97.templateCard=templateCard;
 const trending=$('#trendingTemplates'); if(trending)trending.innerHTML=T.slice(0,8).map(templateCard).join('');
