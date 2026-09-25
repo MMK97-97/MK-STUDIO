@@ -66,16 +66,17 @@ if(grid){
 if($('#templateDetail')){
  const id=new URLSearchParams(location.search).get('id')||store.get('mk97.selectedTemplate','fwcwl-matchday-broadcast');
  const t=T.find(x=>x.id===id)||T[0];
- if(t){
-   $('#detailName').textContent=t.name;$('#detailCategory').textContent=t.category.toUpperCase();
-   $('#detailPreview').innerHTML=templateCard(t);
-   const useBtn=$('#useTemplate');
-   if(useBtn){
-     useBtn.href='poster-editor.html?id='+encodeURIComponent(t.id);
-     useBtn.addEventListener('click',()=>{store.set('mk97.selectedTemplate',t.id);window.MK97.bump('templatesUsed')});
-   }
-   $('#similarTemplates').innerHTML=T.filter(x=>x.category===t.category&&x.id!==t.id).slice(0,4).map(templateCard).join('');
- }
+  if(t){
+    if($('#detailName')) $('#detailName').textContent=t.name;
+    if($('#detailCategory')) $('#detailCategory').textContent=(t.category||'').toUpperCase();
+    if($('#detailPreview')) $('#detailPreview').innerHTML=templateCard(t);
+    const useBtn=$('#useTemplate');
+    if(useBtn){
+      useBtn.href='poster-editor.html?id='+encodeURIComponent(t.id);
+      useBtn.addEventListener('click',()=>{store.set('mk97.selectedTemplate',t.id);window.MK97.bump('templatesUsed')});
+    }
+    if($('#similarTemplates')) $('#similarTemplates').innerHTML=T.filter(x=>x.category===t.category&&x.id!==t.id).slice(0,4).map(templateCard).join('');
+  }
 }
 const intro=$('.logo-transition');
 if(intro){
@@ -91,14 +92,51 @@ if($('#mediaUpload')){
 }
 if($('#brandForm')){
  const b=store.get('mk97.brand',{name:'FWCWL',accent:'#f3c95b',background:'#080d13',showLogo:true});
- $('#brandName').value=b.name;$('#brandAccent').value=b.accent;$('#brandBackground').value=b.background;$('#brandLogo').checked=b.showLogo;
- $('#saveBrand').onclick=()=>{b.name=$('#brandName').value;b.accent=$('#brandAccent').value;b.background=$('#brandBackground').value;b.showLogo=$('#brandLogo').checked;store.set('mk97.brand',b);toast('Brand kit saved');};
+ if($('#brandName')) $('#brandName').value=b.name;
+ if($('#brandAccent')) $('#brandAccent').value=b.accent;
+ if($('#brandBackground')) $('#brandBackground').value=b.background;
+ if($('#brandLogo')) $('#brandLogo').checked=b.showLogo;
+ if($('#saveBrand')) $('#saveBrand').onclick=()=>{
+   if($('#brandName')) b.name=$('#brandName').value;
+   if($('#brandAccent')) b.accent=$('#brandAccent').value;
+   if($('#brandBackground')) b.background=$('#brandBackground').value;
+   if($('#brandLogo')) b.showLogo=$('#brandLogo').checked;
+   store.set('mk97.brand',b);toast('Brand kit saved');
+ };
 }
 if($('#aiUpload')){
  let src=null;
- $('#aiUpload').addEventListener('change',e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{src=r.result;$('#aiOriginal').src=src;$('#aiOriginal').classList.remove('hidden')};r.readAsDataURL(f)});
- $('#removeBackground').onclick=()=>{if(!src){toast('Upload an image first');return}
-   const img=new Image();img.onload=()=>{const c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(img,0,0);const d=x.getImageData(0,0,c.width,c.height),p=d.data,pts=[[2,2],[c.width-3,2],[2,c.height-3],[c.width-3,c.height-3]];let rr=0,gg=0,bb=0;for(const [px,py] of pts){const i=(py*c.width+px)*4;rr+=p[i];gg+=p[i+1];bb+=p[i+2]}rr/=4;gg/=4;bb/=4;for(let i=0;i<p.length;i+=4){const dist=Math.hypot(p[i]-rr,p[i+1]-gg,p[i+2]-bb)/1.732;if(dist<32)p[i+3]=0;else if(dist<62)p[i+3]=Math.round(p[i+3]*(dist-32)/30)}x.putImageData(d,0,0);const url=c.toDataURL('image/png');$('#aiResult').src=url;$('#aiResult').classList.remove('hidden');store.set('mk97.pendingImage',url);window.MK97.bump('aiActions');toast('Cutout ready for Poster Studio');};img.src=src;
+ $('#aiUpload').addEventListener('change',e=>{
+   const f=e.target.files?.[0];if(!f)return;
+   const r=new FileReader();
+   r.onload=()=>{
+     src=r.result;
+     if($('#aiOriginal')){$('#aiOriginal').src=src;$('#aiOriginal').classList.remove('hidden')}
+   };
+   r.readAsDataURL(f);
+ });
+ if($('#removeBackground')) $('#removeBackground').onclick=()=>{
+   if(!src){toast('Upload an image first');return}
+   const img=new Image();
+   img.onload=()=>{
+     const c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;
+     const x=c.getContext('2d',{willReadFrequently:true});
+     x.drawImage(img,0,0);
+     const d=x.getImageData(0,0,c.width,c.height),p=d.data,pts=[[2,2],[c.width-3,2],[2,c.height-3],[c.width-3,c.height-3]];
+     let rr=0,gg=0,bb=0;
+     for(const [px,py] of pts){const i=(py*c.width+px)*4;rr+=p[i];gg+=p[i+1];bb+=p[i+2]}
+     rr/=4;gg/=4;bb/=4;
+     for(let i=0;i<p.length;i+=4){
+       const dist=Math.hypot(p[i]-rr,p[i+1]-gg,p[i+2]-bb)/1.732;
+       if(dist<32)p[i+3]=0;else if(dist<62)p[i+3]=Math.round(p[i+3]*(dist-32)/30)
+     }
+     x.putImageData(d,0,0);
+     const url=c.toDataURL('image/png');
+     if($('#aiResult')){$('#aiResult').src=url;$('#aiResult').classList.remove('hidden')}
+     store.set('mk97.pendingImage',url);window.MK97.bump('aiActions');
+     toast('Cutout ready for Poster Studio');
+   };
+   img.src=src;
  };
 }
 if($('#projectGrid')){
@@ -109,7 +147,16 @@ if($('#analyticsMetrics')){
  const a=store.get('mk97.analytics',{templatesUsed:0,exports:0,projects:0,aiActions:0,videoEdits:0});
  $('#analyticsMetrics').innerHTML=[['Templates Used',a.templatesUsed],['Exports',a.exports],['Saved Projects',a.projects],['AI Actions',a.aiActions]].map(([l,v])=>`<div class="metric"><strong>${v||0}</strong><span>${l}</span></div>`).join('');
 }
-if($('#saveSchedule'))$('#saveSchedule').onclick=()=>{store.set('mk97.schedule',{date:$('#scheduleDate').value,time:$('#scheduleTime').value,platform:$('#schedulePlatform').value});toast('Schedule saved locally')};
+if($('#saveSchedule')) {
+  $('#saveSchedule').onclick=()=>{
+    store.set('mk97.schedule',{
+      date:$('#scheduleDate')?.value||'',
+      time:$('#scheduleTime')?.value||'',
+      platform:$('#schedulePlatform')?.value||''
+    });
+    toast('Schedule saved locally');
+  };
+}
 
 // Studio Selector Modal (POSTER EDITOR <> VIDEO EDITOR)
 function initStudioModal() {

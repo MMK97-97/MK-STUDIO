@@ -864,16 +864,20 @@
         </section>
       `;
 
-      $('#projDurationControl').onchange = e => {
-        pushState();
-        state.duration = clamp(Number(e.target.value) || 15, 3, 300);
-        syncUI();
-      };
-      $('#globalFilterSelect').onchange = e => {
-        pushState();
-        state.globalFilter = e.target.value;
-        renderPreview();
-      };
+      if ($('#projDurationControl')) {
+        $('#projDurationControl').onchange = e => {
+          pushState();
+          state.duration = clamp(Number(e.target.value) || 15, 3, 300);
+          syncUI();
+        };
+      }
+      if ($('#globalFilterSelect')) {
+        $('#globalFilterSelect').onchange = e => {
+          pushState();
+          state.globalFilter = e.target.value;
+          renderPreview();
+        };
+      }
       return;
     }
 
@@ -1033,18 +1037,22 @@
       });
     });
 
-    $('#addKfAtPlayheadBtn').onclick = () => {
-      pushState();
-      toggleKeyframe();
-      renderInspector();
-    };
+    if ($('#addKfAtPlayheadBtn')) {
+      $('#addKfAtPlayheadBtn').onclick = () => {
+        pushState();
+        toggleKeyframe();
+        renderInspector();
+      };
+    }
 
-    $('#clearKfBtn').onclick = () => {
-      pushState();
-      c.keyframes = [];
-      syncUI();
-      toast('Keyframes cleared');
-    };
+    if ($('#clearKfBtn')) {
+      $('#clearKfBtn').onclick = () => {
+        pushState();
+        c.keyframes = [];
+        syncUI();
+        toast('Keyframes cleared');
+      };
+    }
   }
 
   // --- Keyframe Toggling & Management ---
@@ -1990,10 +1998,10 @@
     pushState();
     sel.chroma = {
       enabled: true,
-      color: $('#chromaColorPicker').value || '#00ff00',
-      tolerance: Number($('#chromaTolerance').value) || 38,
-      feather: Number($('#chromaFeather').value) || 15,
-      spill: Number($('#chromaSpill').value) || 40
+      color: $('#chromaColorPicker')?.value || '#00ff00',
+      tolerance: Number($('#chromaTolerance')?.value) || 38,
+      feather: Number($('#chromaFeather')?.value) || 15,
+      spill: Number($('#chromaSpill')?.value) || 40
     };
     renderPreview();
     toast('Chroma Key applied to ' + sel.name);
@@ -2001,7 +2009,8 @@
   });
 
   $('#chromaPresetSelect')?.addEventListener('change', e => {
-    $('#chromaColorPicker').value = e.target.value;
+    const cp = $('#chromaColorPicker');
+    if (cp) cp.value = e.target.value;
   });
 
   // Global Keyboard Shortcuts
