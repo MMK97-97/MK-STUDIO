@@ -26,42 +26,147 @@ function nav(){
  return `<nav class="bottomnav">${items.map(([h,i,l,k,c])=>`<a href="${h}" class="navitem ${active===k?'active':''} ${c}" ${c==='create'?'data-open-create':''}><span>${i}</span>${l}</a>`).join('')}</nav>`;
 }
 $$('[data-bottomnav]').forEach(x=>x.innerHTML=nav());
+function isFav(id){
+  const favs = store.get('mk97.favorites', []);
+  return favs.includes(id);
+}
+function toggleFav(id, btn){
+  const favs = store.get('mk97.favorites', []);
+  const idx = favs.indexOf(id);
+  if(idx >= 0){
+    favs.splice(idx, 1);
+    if(btn){ btn.textContent='🤍'; btn.classList.remove('active'); }
+    toast('Removed from favorites');
+  } else {
+    favs.push(id);
+    if(btn){ btn.textContent='❤️'; btn.classList.add('active'); }
+    toast('Added to favorites ❤️');
+  }
+  store.set('mk97.favorites', favs);
+}
+function shareTemplate(id){
+  const url = `${location.origin}${location.pathname.replace(/[^\/]+$/, '')}template-detail.html?id=${encodeURIComponent(id)}`;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(url).then(()=>toast('Template link copied to clipboard 🔗'));
+  } else {
+    toast('Template link: ' + url);
+  }
+}
+
+window.MK97.isFav = isFav;
+window.MK97.toggleFav = toggleFav;
+window.MK97.share = shareTemplate;
+
+function createAiCard(){
+  return `<div class="template-create-ai-card" onclick="location.href='ai-tools.html?tool=generate-poster'" title="Create with AI">
+    <div class="ai-sparkle-circle">
+      <span>✨</span>
+    </div>
+    <div class="ai-card-title">Create with AI</div>
+    <div class="ai-card-sub">Generate custom cricket & sports graphics in seconds</div>
+    <div class="ai-card-cta">
+      <span>✦ Launch Neural AI ›</span>
+    </div>
+  </div>`;
+}
+
 function templateCard(t){
- const logoSrc = esc(t.logo || 'fwcwl-logo.jpeg');
- const aspectTag = t.aspect === 'square' ? '1:1 POST' : (t.aspect === 'story' ? '9:16 FLYER' : '4:5 CARD');
- const titleHtml = esc(t.title || t.name).replaceAll('\n', '<br>');
- return `<a class="template-box-card" href="template-detail.html?id=${encodeURIComponent(t.id)}" title="${esc(t.name)}">
-  <div class="template-box-art" style="--a:${t.palette?.[0]||'#08121e'};--b:${t.palette?.[1]||'#1e293b'}">
-   <div class="card-top-row">
-    <img class="card-logo" src="${logoSrc}" alt="FWCWL">
-    <span class="card-kicker-pill">${esc(t.kicker||'FWCWL')}</span>
-    <span class="template-crown">👑</span>
+  const logoSrc = esc(t.logo || 'fwcwl-logo.jpeg');
+  const aspectTag = t.aspect === 'square' ? '1:1 POST' : (t.aspect === 'story' ? '9:16 FLYER' : (t.aspect === 'landscape' ? '16:9 BANNER' : '4:5 CARD'));
+  const titleHtml = esc(t.title || t.name).replaceAll('\n', '<br>');
+  const fav = isFav(t.id);
+  const aspectClass = `aspect-${t.aspect || 'square'}`;
+
+  return `<a class="template-box-card ${aspectClass}" href="template-detail.html?id=${encodeURIComponent(t.id)}" title="${esc(t.name)}">
+   <div class="template-box-art" style="--a:${t.palette?.[0]||'#08121e'};--b:${t.palette?.[1]||'#1e293b'}">
+    <div class="card-top-row">
+     <div style="display:flex;align-items:center;gap:6px">
+       <img class="card-logo" src="${logoSrc}" alt="FWCWL">
+       <span class="card-kicker-pill">${esc(t.kicker||'FWCWL')}</span>
+     </div>
+     <div class="card-badges-group">
+       ${t.isVideo ? `<span class="card-badge-video" title="Video Studio Ready">📹</span>` : ''}
+       <button class="card-badge-edit" title="Quick Edit in Poster Studio" onclick="event.preventDefault();event.stopPropagation();location.href='poster-editor.html?id=${encodeURIComponent(t.id)}'">✎</button>
+     </div>
+    </div>
+    <div class="card-center-stage">
+     <div class="card-main-title">${titleHtml}</div>
+     <div class="card-sub-info">${esc(t.detail||'')}</div>
+    </div>
+    <div class="card-bottom-pill">
+     <span>${aspectTag}</span>
+     <div class="card-actions-row">
+       <button class="card-action-icon" title="Share Template" onclick="event.preventDefault();event.stopPropagation();window.MK97.share('${t.id}')">🔗</button>
+       <button class="card-action-icon fav-btn ${fav?'active':''}" title="${fav?'Remove Favorite':'Add to Favorites'}" onclick="event.preventDefault();event.stopPropagation();window.MK97.toggleFav('${t.id}',this)">${fav?'❤️':'🤍'}</button>
+     </div>
+    </div>
    </div>
-   <div class="card-center-stage">
-    <div class="card-main-title">${titleHtml}</div>
-    <div class="card-sub-info">${esc(t.detail||'')}</div>
+   <div class="template-box-meta">
+    <strong class="template-title-text">${esc(t.name)}</strong>
+    <span class="meta-tag ${t.isVideo ? 'video-tag' : ''}">${t.isVideo ? '🎬 VIDEO' : esc((t.category||'cricket').toUpperCase())}</span>
    </div>
-   <div class="card-bottom-pill">
-    <span>${aspectTag}</span>
-    <span>★ PRO</span>
-   </div>
-  </div>
-  <div class="template-box-meta">
-   <strong>${esc(t.name)}</strong>
-   <span class="meta-tag">${esc((t.category||'cricket').toUpperCase())}</span>
-  </div>
- </a>`;
+  </a>`;
 }
 window.MK97.templateCard=templateCard;
-const trending=$('#trendingTemplates'); if(trending)trending.innerHTML=T.slice(0,8).map(templateCard).join('');
+
+const trending=$('#trendingTemplates');
+if(trending) trending.innerHTML=T.slice(0,12).map(templateCard).join('');
+
 const grid=$('#templateGrid'),search=$('#templateSearch'),chips=$('#categoryChips'),count=$('#templateCount');
 if(grid){
- let cat='all'; const cats=['all',...new Set(T.map(x=>x.category))];
- chips.innerHTML=cats.map(c=>`<button class="chip ${c==='all'?'active':''}" data-cat="${esc(c)}">${c==='all'?'All':c.replace(/(^|-)\w/g,m=>m.toUpperCase())}</button>`).join('');
- const render=()=>{const q=(search?.value||'').trim().toLowerCase();const list=T.filter(t=>(cat==='all'||t.category===cat)&&(!q||`${t.name} ${t.title} ${t.kicker} ${t.detail} ${t.style}`.toLowerCase().includes(q)));grid.innerHTML=list.map(templateCard).join('');if(count)count.textContent=`${list.length} templates`;};
- search?.addEventListener('input',render);
- chips?.addEventListener('click',e=>{const b=e.target.closest('[data-cat]');if(!b)return;cat=b.dataset.cat;$$('.chip',chips).forEach(x=>x.classList.toggle('active',x===b));render();});
- render();
+  let cat='all';
+  const filterTabs = [
+    { id: 'all', label: 'All Templates' },
+    { id: 'watch-party', label: '🔥 Watch Party' },
+    { id: 'match', label: 'Match Day' },
+    { id: 'schedule', label: '📅 Schedules' },
+    { id: 'event', label: 'Tournaments' },
+    { id: 'team', label: 'Rosters & Captains' },
+    { id: 'result', label: 'Results & Awards' },
+    { id: 'video', label: '🎬 Video Pro' },
+    { id: 'favorites', label: '❤️ Favorites' }
+  ];
+
+  chips.innerHTML = filterTabs.map(c => `<button class="chip-btn ${c.id==='all'?'active':''}" data-cat="${c.id}">${c.label}</button>`).join('');
+
+  const render = () => {
+    const q = (search?.value || '').trim().toLowerCase();
+    const favList = store.get('mk97.favorites', []);
+
+    let list = T.filter(t => {
+      if (cat === 'watch-party') {
+        if (!t.style?.includes('watch-party') && !t.name.toLowerCase().includes('watch party') && !t.title.toLowerCase().includes('watch party')) return false;
+      } else if (cat === 'schedule') {
+        if (!t.style?.includes('schedule') && !t.name.toLowerCase().includes('schedule') && !t.title.toLowerCase().includes('schedule')) return false;
+      } else if (cat === 'video') {
+        if (!t.isVideo) return false;
+      } else if (cat === 'favorites') {
+        if (!favList.includes(t.id)) return false;
+      } else if (cat !== 'all') {
+        if (t.category !== cat) return false;
+      }
+
+      if (q) {
+        const haystack = `${t.name} ${t.title} ${t.kicker} ${t.detail} ${t.style} ${t.category}`.toLowerCase();
+        if (!haystack.includes(q)) return false;
+      }
+      return true;
+    });
+
+    const aiCard = cat === 'all' && !q ? createAiCard() : '';
+    grid.innerHTML = aiCard + list.map(templateCard).join('');
+    if (count) count.textContent = `${list.length} Templates Available`;
+  };
+
+  search?.addEventListener('input', render);
+  chips?.addEventListener('click', e => {
+    const b = e.target.closest('[data-cat]');
+    if (!b) return;
+    cat = b.dataset.cat;
+    $$('.chip-btn', chips).forEach(x => x.classList.toggle('active', x === b));
+    render();
+  });
+  render();
 }
 if($('#templateDetail')){
  const id=new URLSearchParams(location.search).get('id')||store.get('mk97.selectedTemplate','fwcwl-matchday-broadcast');
