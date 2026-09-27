@@ -52,10 +52,48 @@ function drawText(l){
   ctx.translate(l.x+l.w/2,l.y+l.h/2);
   ctx.rotate((l.rotation||0)*Math.PI/180);
   ctx.translate(-(l.x+l.w/2),-(l.y+l.h/2));
+
+  // Background Badge Box if enabled
+  if(l.bgBadge){
+    ctx.save();
+    ctx.fillStyle = l.bgBadgeColor || 'rgba(0,0,0,0.7)';
+    const rad = l.bgBadgeRadius || 12;
+    ctx.beginPath();
+    if(ctx.roundRect){
+      ctx.roundRect(l.x, l.y, l.w, l.h, rad);
+    } else {
+      ctx.rect(l.x, l.y, l.w, l.h);
+    }
+    ctx.fill();
+    ctx.restore();
+  }
+
   const fontFam = l.font ? `"${l.font}", Impact, "Arial Black", sans-serif` : '"Montserrat", Impact, sans-serif';
   ctx.font=`${l.weight||900} ${l.size||60}px ${fontFam}`;
-  ctx.textAlign=l.align||'left';ctx.textBaseline='top';ctx.fillStyle=l.color||'#fff';
-  const ax=l.align==='center'?l.x+l.w/2:l.align==='right'?l.x+l.w:l.x, lines=String(l.text||'').split('\n');let y=l.y;
+  ctx.textAlign=l.align||'left';ctx.textBaseline='top';
+
+  if(ctx.letterSpacing !== undefined){
+    ctx.letterSpacing = `${l.tracking || 0}px`;
+  }
+
+  // Color fill or Gradient
+  if(l.gradient){
+    const grad = ctx.createLinearGradient(l.x, l.y, l.x + l.w, l.y + l.h);
+    if(l.gradient === 'gold'){ grad.addColorStop(0, '#fef08a'); grad.addColorStop(1, '#f59e0b'); }
+    else if(l.gradient === 'cyan'){ grad.addColorStop(0, '#67e8f9'); grad.addColorStop(1, '#0284c7'); }
+    else if(l.gradient === 'fire'){ grad.addColorStop(0, '#f87171'); grad.addColorStop(1, '#b91c1c'); }
+    else if(l.gradient === 'purple'){ grad.addColorStop(0, '#c084fc'); grad.addColorStop(1, '#7e22ce'); }
+    ctx.fillStyle = grad;
+  } else {
+    ctx.fillStyle = l.color || '#fff';
+  }
+
+  const ax=l.align==='center'?l.x+l.w/2:l.align==='right'?l.x+l.w:l.x;
+  let text = String(l.text||'');
+  if(l.transform === 'upper') text = text.toUpperCase();
+  else if(l.transform === 'lower') text = text.toLowerCase();
+
+  const lines=text.split('\n');let y=l.y;
   const lineH=(l.size||60)*(l.lineHeight||1.12);
   for(const line of lines){
     if(l.shadow){ctx.shadowColor='rgba(0,0,0,.85)';ctx.shadowBlur=l.shadow;ctx.shadowOffsetY=Math.round(l.shadow*.4)}
@@ -75,10 +113,39 @@ function drawLayer(l){
     ctx.rotate((l.rotation||0)*Math.PI/180);
     ctx.fillStyle=l.color||'#fff';
     ctx.beginPath();
-    if(l.borderRadius && ctx.roundRect){
-      ctx.roundRect(-l.w/2,-l.h/2,l.w,l.h,l.borderRadius);
+
+    if(l.shapeType === 'circle'){
+      ctx.arc(0, 0, Math.min(l.w, l.h)/2, 0, Math.PI * 2);
+    } else if(l.shapeType === 'shield'){
+      const hw = l.w/2, hh = l.h/2;
+      ctx.moveTo(-hw, -hh);
+      ctx.lineTo(hw, -hh);
+      ctx.lineTo(hw, hh * 0.3);
+      ctx.quadraticCurveTo(hw, hh, 0, hh);
+      ctx.quadraticCurveTo(-hw, hh, -hw, hh * 0.3);
+      ctx.closePath();
+    } else if(l.shapeType === 'slash'){
+      const hw = l.w/2, hh = l.h/2, skew = 25;
+      ctx.moveTo(-hw + skew, -hh);
+      ctx.lineTo(hw, -hh);
+      ctx.lineTo(hw - skew, hh);
+      ctx.lineTo(-hw, hh);
+      ctx.closePath();
+    } else if(l.shapeType === 'star'){
+      const r = Math.min(l.w, l.h)/2, ir = r * 0.45;
+      for(let i=0; i<10; i++){
+        const rad = (i * Math.PI) / 5 - Math.PI/2;
+        const curR = i % 2 === 0 ? r : ir;
+        const sx = Math.cos(rad) * curR, sy = Math.sin(rad) * curR;
+        if(i === 0) ctx.moveTo(sx, sy); else ctx.lineTo(sx, sy);
+      }
+      ctx.closePath();
     } else {
-      ctx.rect(-l.w/2,-l.h/2,l.w,l.h);
+      if(l.borderRadius && ctx.roundRect){
+        ctx.roundRect(-l.w/2,-l.h/2,l.w,l.h,l.borderRadius);
+      } else {
+        ctx.rect(-l.w/2,-l.h/2,l.w,l.h);
+      }
     }
     ctx.fill();
     if(l.strokeColor && l.strokeWidth){
@@ -435,17 +502,46 @@ function renderInspector(){
     return;
   }
   let html=`<section class="inspector-section"><h4>Transform</h4><div class="row2">${ctrl('X',l.x,'x','number')}${ctrl('Y',l.y,'y','number')}</div><div class="row2">${ctrl('Width',l.w,'w','number')}${ctrl('Height',l.h,'h','number')}</div>${ctrl('Rotation',l.rotation||0,'rotation','range',-180,180,1)}${ctrl('Opacity',Math.round((l.opacity??1)*100),'opacity','range',0,100,1)}</section>`;
-  if(l.type==='text')html+=`<section class="inspector-section"><h4>Text</h4><label class="control"><span>Content</span><textarea data-key="text">${l.text||''}</textarea></label><div class="row2">${ctrl('Size',l.size,'size','number')}${ctrl('Color',l.color,'color','color')}</div><div class="row2"><label class="control"><span>Font</span><select data-key="font"><option>Montserrat</option><option>Anton</option><option>Bebas Neue</option><option>Teko</option><option>Cinzel</option><option>Inter</option><option>Impact</option><option>Arial</option><option>Georgia</option></select></label><label class="control"><span>Align</span><select data-key="align"><option>left</option><option>center</option><option>right</option></select></label></div>${ctrl('Shadow',l.shadow||0,'shadow','range',0,40,1)}<div class="row2">${ctrl('Stroke',l.stroke||'#000000','stroke','color')}${ctrl('Stroke width',l.strokeWidth||0,'strokeWidth','number')}</div></section>`;
-  if(l.type==='shape')html+=`<section class="inspector-section"><h4>Shape</h4>${ctrl('Color',l.color,'color','color')}</section>`;
+  if(l.type==='text')html+=`
+    <section class="inspector-section">
+      <h4>Text & Typography</h4>
+      <label class="control"><span>Content</span><textarea data-key="text">${l.text||''}</textarea></label>
+      <div class="row2">${ctrl('Size',l.size,'size','number')}${ctrl('Color',l.color,'color','color')}</div>
+      <div class="row2">
+        <label class="control"><span>Font</span><select data-key="font"><option>Montserrat</option><option>Anton</option><option>Bebas Neue</option><option>Teko</option><option>Cinzel</option><option>Inter</option><option>Impact</option><option>Arial</option><option>Georgia</option></select></label>
+        <label class="control"><span>Align</span><select data-key="align"><option>left</option><option>center</option><option>right</option></select></label>
+      </div>
+      <div class="row2">
+        <label class="control"><span>Gradient</span><select data-key="gradient"><option value="">Solid Color</option><option value="gold">Gold Metallic</option><option value="cyan">Neon Cyan</option><option value="fire">Fire Ember</option><option value="purple">Cyber Purple</option></select></label>
+        <label class="control"><span>Casing</span><select data-key="transform"><option value="none">Normal</option><option value="upper">UPPERCASE</option><option value="lower">lowercase</option></select></label>
+      </div>
+      <div class="row2">
+        <label class="control"><span>Badge Box</span><select data-key="bgBadge"><option value="false">Off</option><option value="true">On</option></select></label>
+        ${ctrl('Badge Color', l.bgBadgeColor||'#f59e0b', 'bgBadgeColor', 'color')}
+      </div>
+      ${ctrl('Letter Spacing',l.tracking||0,'tracking','range',-5,40,1)}
+      ${ctrl('Shadow',l.shadow||0,'shadow','range',0,40,1)}
+      <div class="row2">${ctrl('Stroke',l.stroke||'#000000','stroke','color')}${ctrl('Stroke width',l.strokeWidth||0,'strokeWidth','number')}</div>
+    </section>
+  `;
+  if(l.type==='shape')html+=`
+    <section class="inspector-section">
+      <h4>Shape Properties</h4>
+      ${ctrl('Color',l.color,'color','color')}
+      <div class="row2">${ctrl('Border Radius',l.borderRadius||0,'borderRadius','range',0,120,1)}${ctrl('Stroke Width',l.strokeWidth||0,'strokeWidth','range',0,30,1)}</div>
+      ${ctrl('Stroke Color',l.strokeColor||'#f59e0b','strokeColor','color')}
+    </section>
+  `;
   if(l.type==='draw')html+=`<section class="inspector-section"><h4>Brush Stroke</h4>${ctrl('Color',l.color||'#f59e0b','color','color')}${ctrl('Stroke Width',l.size||8,'size','range',1,50,1)}</section>`;
   if(l.type==='image')html+=`<section class="inspector-section"><h4>Color & Light Adjustments</h4>${ctrl('Brightness',l.brightness||100,'brightness','range',0,200,1)}${ctrl('Contrast',l.contrast||100,'contrast','range',0,200,1)}${ctrl('Saturation',l.saturation||100,'saturation','range',0,200,1)}${ctrl('Hue',l.hue||0,'hue','range',-180,180,1)}${ctrl('Blur',l.blur||0,'blur','range',0,20,.5)}${ctrl('Sepia',l.sepia||0,'sepia','range',0,100,1)}</section>`;
   box.innerHTML=html;
   $$('[data-key]',box).forEach(el=>{
-    if(el.tagName==='SELECT'&&l[el.dataset.key]!=null)el.value=l[el.dataset.key];
+    if(el.tagName==='SELECT'&&l[el.dataset.key]!=null)el.value=String(l[el.dataset.key]);
     el.addEventListener(el.type==='range'||el.type==='color'?'input':'change',()=>{
       const k=el.dataset.key;push();let v=el.value;
-      if(['x','y','w','h','rotation','size','shadow','strokeWidth','brightness','contrast','saturation','hue','blur','sepia'].includes(k))v=Number(v);
+      if(['x','y','w','h','rotation','size','shadow','strokeWidth','brightness','contrast','saturation','hue','blur','sepia','tracking','borderRadius'].includes(k))v=Number(v);
       if(k==='opacity')v=Number(v)/100;
+      if(k==='bgBadge')v=v==='true';
       l[k]=v;render();renderLayers();
     });
   });
@@ -453,8 +549,105 @@ function renderInspector(){
 
 function addText(){
   push();
-  const l={id:uid(),type:'text',name:'New Title',text:'CRICKET CREATOR',x:120,y:400,w:840,h:180,font:'Impact',size:110,weight:900,color:'#fcd34d',align:'center',opacity:1,rotation:0,visible:true,locked:false,stroke:'#000',strokeWidth:3,shadow:18};
+  const l={id:uid(),type:'text',name:'New Title',text:'CRICKET CREATOR',x:120,y:400,w:840,h:180,font:'Impact',size:110,weight:900,color:'#fcd34d',align:'center',opacity:1,rotation:0,visible:true,locked:false,stroke:'#000',strokeWidth:3,shadow:18,tracking:0};
   state.layers.push(l);state.selected=l.id;syncAll();toast('Text layer added');
+}
+
+function addBadge(badgeId){
+  push();
+  const presets = {
+    'match-day': { text: '⚡ MATCH DAY', bg: '#f59e0b', color: '#040507' },
+    'vs': { text: 'VS', bg: '#dc2626', color: '#ffffff' },
+    'live': { text: '● LIVE NOW', bg: '#ef4444', color: '#ffffff' },
+    'final': { text: '🏆 THE FINAL', bg: '#eab308', color: '#040507' },
+    'powerplay': { text: '💥 POWERPLAY', bg: '#f97316', color: '#ffffff' },
+    'max6': { text: 'SIX! MAXIMUM', bg: '#8b5cf6', color: '#ffffff' },
+    'wicket': { text: 'OUT! WICKET', bg: '#b91c1c', color: '#ffffff' },
+    'champions': { text: '👑 CHAMPIONS', bg: '#eab308', color: '#040507' }
+  };
+  const b = presets[badgeId] || presets['match-day'];
+  const l = {
+    id: uid(),
+    type: 'text',
+    name: b.text,
+    text: b.text,
+    x: Math.round(state.w / 2 - 170),
+    y: Math.round(state.h * 0.22),
+    w: 340,
+    h: 74,
+    font: 'Impact',
+    size: 42,
+    weight: 900,
+    color: b.color,
+    align: 'center',
+    opacity: 1,
+    rotation: 0,
+    visible: true,
+    locked: false,
+    bgBadge: true,
+    bgBadgeColor: b.bg,
+    bgBadgeRadius: 12
+  };
+  state.layers.push(l);
+  state.selected = l.id;
+  syncAll();
+  closeSheets();
+  toast(`Badge "${b.text}" added`);
+}
+
+function addPresetShape(shapeType){
+  push();
+  const l = {
+    id: uid(),
+    type: 'shape',
+    name: shapeType.toUpperCase() + ' Element',
+    shapeType,
+    x: Math.round(state.w / 2 - 200),
+    y: Math.round(state.h * 0.4),
+    w: shapeType === 'circle' ? 240 : (shapeType === 'pill' ? 360 : 400),
+    h: shapeType === 'circle' ? 240 : (shapeType === 'scorebar' ? 60 : 160),
+    color: shapeType === 'scorebar' ? '#0f172a' : '#f59e0b',
+    borderRadius: shapeType === 'pill' ? 999 : 16,
+    strokeColor: '#f59e0b',
+    strokeWidth: shapeType === 'scorebar' ? 2 : 0,
+    opacity: 0.92,
+    rotation: shapeType === 'slash' ? -8 : 0,
+    visible: true,
+    locked: false
+  };
+  state.layers.push(l);
+  state.selected = l.id;
+  syncAll();
+  closeSheets();
+  toast(`Shape added`);
+}
+
+function addSticker(emoji, name){
+  push();
+  const l = {
+    id: uid(),
+    type: 'text',
+    name: name || 'Sticker',
+    text: emoji,
+    x: Math.round(state.w / 2 - 90),
+    y: Math.round(state.h * 0.35),
+    w: 180,
+    h: 180,
+    font: 'Arial',
+    size: 110,
+    weight: 900,
+    color: '#ffffff',
+    align: 'center',
+    opacity: 1,
+    rotation: 0,
+    visible: true,
+    locked: false
+  };
+  state.layers.push(l);
+  state.selected = l.id;
+  syncAll();
+  closeSheets();
+  toast(`Sticker ${emoji} added`);
 }
 
 function addShape(){
@@ -507,7 +700,7 @@ $$('.rail-btn').forEach(b=>{
     }
     else if(r==='templates'){ drawMode = false; openAssetTab('templates'); }
     else if(r==='text'){ drawMode = false; addText(); }
-    else if(r==='elements'){ drawMode = false; addShape(); }
+    else if(r==='elements'){ drawMode = false; openAssetTab('elements'); }
     else if(r==='photos'){ drawMode = false; isReplacing = false; $('#imageInput').click(); }
     else if(r==='background'){ drawMode = false; state.selected=null; renderInspector(); openEdit(); }
     else if(r==='ai'){ drawMode = false; location.href='ai-tools.html'; }
@@ -523,6 +716,31 @@ $$('.rail-btn').forEach(b=>{
 
 if($('#mediaAddText')) $('#mediaAddText').onclick=()=>{addText();closeSheets()};
 if($('#floatingAddLayerBtn')) $('#floatingAddLayerBtn').onclick=()=>{addText();};
+
+// Elements, Badges & Stickers Grid Click Handlers
+const badgesGrid = $('#badgesChipGrid');
+if(badgesGrid){
+  badgesGrid.onclick = (e) => {
+    const btn = e.target.closest('[data-badge]');
+    if(btn) addBadge(btn.dataset.badge);
+  };
+}
+
+const shapesGrid = $('#shapesPreviewGrid');
+if(shapesGrid){
+  shapesGrid.onclick = (e) => {
+    const btn = e.target.closest('[data-shape]');
+    if(btn) addPresetShape(btn.dataset.shape);
+  };
+}
+
+const stickersGrid = $('#stickersEmojiGrid');
+if(stickersGrid){
+  stickersGrid.onclick = (e) => {
+    const btn = e.target.closest('[data-sticker]');
+    if(btn) addSticker(btn.dataset.sticker, btn.dataset.name);
+  };
+}
 
 // Toggle Floating Layer Panel
 const toggleLpBtn=$('#toggleLayerPanelBtn');
@@ -878,17 +1096,85 @@ $('#canvasSize').onchange=e=>{
   toast(`Canvas: ${state.w} × ${state.h}`);
 };
 
-function exportPoster(){
-  const keep=state.selected;state.selected=null;render();
-  const a=document.createElement('a');
-  a.download='MK97-Cricket-Poster.png';
-  a.href=canvas.toDataURL('image/png',1);
-  a.click();
-  state.selected=keep;render();
-  bump('exports');
-  toast('Poster exported in Ultra HD PNG');
+function openPosterExportModal(){
+  const modal = $('#posterExportModal');
+  if(!modal) return;
+  const updateDim = () => {
+    const scale = Number($('#posterExportScale')?.value || 2);
+    const w = state.w * scale, h = state.h * scale;
+    const dimEl = $('#posterExportDim');
+    if(dimEl) dimEl.textContent = `${w} × ${h} px`;
+  };
+  const scaleSelect = $('#posterExportScale');
+  if(scaleSelect) scaleSelect.onchange = updateDim;
+  updateDim();
+  modal.classList.remove('hidden');
 }
-$('#exportBtn').onclick=exportPoster;
+
+function closePosterExportModal(){
+  const modal = $('#posterExportModal');
+  if(modal) modal.classList.add('hidden');
+}
+
+if($('#closePosterExportModal')) $('#closePosterExportModal').onclick = closePosterExportModal;
+if($('#posterExportModal')) $('#posterExportModal').onclick = (e) => {
+  if(e.target === $('#posterExportModal')) closePosterExportModal();
+};
+
+function performPosterExport(action = 'download'){
+  const scale = Number($('#posterExportScale')?.value || 2);
+  const format = $('#posterExportFormat')?.value || 'png';
+  const mime = format === 'jpeg' ? 'image/jpeg' : (format === 'webp' ? 'image/webp' : 'image/png');
+  const keep = state.selected;
+  state.selected = null;
+  render();
+
+  // Create scaled export canvas
+  const expCanvas = document.createElement('canvas');
+  expCanvas.width = state.w * scale;
+  expCanvas.height = state.h * scale;
+  const expCtx = expCanvas.getContext('2d');
+
+  expCtx.save();
+  expCtx.imageSmoothingEnabled = true;
+  expCtx.imageSmoothingQuality = 'high';
+  expCtx.drawImage(canvas, 0, 0, state.w, state.h, 0, 0, expCanvas.width, expCanvas.height);
+  expCtx.restore();
+
+  state.selected = keep;
+  render();
+
+  if(action === 'copy'){
+    expCanvas.toBlob(blob => {
+      if(!blob){ toast('Could not generate image blob'); return; }
+      try {
+        navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).then(() => {
+          toast('Copied Ultra HD graphic to clipboard!');
+          closePosterExportModal();
+        }).catch(() => {
+          toast('Clipboard access blocked by browser');
+        });
+      } catch(e) {
+        toast('Clipboard copy unavailable');
+      }
+    }, 'image/png');
+    return;
+  }
+
+  // Download
+  const ext = format === 'jpeg' ? 'jpg' : format;
+  const a = document.createElement('a');
+  a.download = `MK97-Poster-${expCanvas.width}x${expCanvas.height}.${ext}`;
+  a.href = expCanvas.toDataURL(mime, 0.98);
+  a.click();
+  bump('exports');
+  toast(`Exported in ${format.toUpperCase()} (${expCanvas.width}×${expCanvas.height})`);
+  closePosterExportModal();
+}
+
+if($('#posterDownloadBtn')) $('#posterDownloadBtn').onclick = () => performPosterExport('download');
+if($('#posterCopyClipboardBtn')) $('#posterCopyClipboardBtn').onclick = () => performPosterExport('copy');
+$('#exportBtn').onclick = openPosterExportModal;
 if($('#moreMenuBtn')) $('#moreMenuBtn').onclick=()=>openAssetTab('templates');
 
 function syncAll(){render();renderLayers();renderInspector()}

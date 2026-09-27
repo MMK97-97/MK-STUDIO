@@ -2708,3 +2708,265 @@ body.editor-page {
   box-shadow: 0 0 24px rgba(245, 158, 11, 0.85);
 }
 
+/* ========================================================
+   ELEMENTS & BADGES LIBRARY (Poster Studio)
+   ======================================================== */
+.elements-library-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.badges-chip-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.badge-chip {
+  height: 36px;
+  border-radius: 9px;
+  border: none;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.badge-chip:hover {
+  transform: scale(1.04);
+}
+
+.badge-chip.gold {
+  background: linear-gradient(135deg, #fef08a, #f59e0b);
+  color: #040507;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+}
+
+.badge-chip.crimson {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(185, 28, 28, 0.3);
+}
+
+.badge-chip.neon {
+  background: linear-gradient(135deg, #38bdf8, #0284c7);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+}
+
+.badge-chip.amber {
+  background: linear-gradient(135deg, #fb923c, #ea580c);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3);
+}
+
+.badge-chip.purple {
+  background: linear-gradient(135deg, #c084fc, #7c3aed);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
+.shapes-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.shape-card {
+  background: rgba(18, 24, 34, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 10px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  color: #94a3b8;
+  font-size: 8.5px;
+  font-weight: 700;
+}
+
+.shape-card:hover {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: var(--gold-primary);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.shape-icon-preview {
+  width: 38px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+}
+
+.shape-icon-preview.pill-shape {
+  background: var(--gold-metallic);
+  border-radius: 999px;
+  height: 14px;
+}
+
+.shape-icon-preview.slash-shape {
+  background: var(--gold-metallic);
+  transform: skewX(-20deg);
+  height: 16px;
+}
+
+.shape-icon-preview.circle-shape {
+  background: var(--gold-metallic);
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+}
+
+.shape-icon-preview.scorebar-shape {
+  background: #0f172a;
+  border: 1.5px solid var(--gold-primary);
+  border-radius: 4px;
+  height: 12px;
+  width: 36px;
+}
+
+.stickers-emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.sticker-btn {
+  height: 48px;
+  background: rgba(18, 24, 34, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  font-size: 26px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sticker-btn:hover {
+  background: rgba(245, 158, 11, 0.2);
+  border-color: var(--gold-primary);
+  transform: scale(1.1);
+}
+
+/* ========================================================
+   SFX LIBRARY AUDITION CONTROLS (Video Studio)
+   ======================================================== */
+.sfx-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: rgba(18, 24, 34, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sfx-card:hover {
+  background: rgba(245, 158, 11, 0.1);
+  border-color: var(--gold-primary);
+}
+
+.sfx-play-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--gold-metallic);
+  color: #040507;
+  border: none;
+  font-size: 9px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.sfx-play-btn:hover {
+  transform: scale(1.12);
+}
+
+.sfx-add-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: none;
+  font-size: 14px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.sfx-add-btn:hover {
+  background: var(--gold-primary);
+  color: #040507;
+}
+
+/* ========================================================
+   ULTRA HD EXPORT MODAL (Shared / Poster)
+   ======================================================== */
+.export-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 5, 7, 0.88);
+  backdrop-filter: blur(16px);
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+}
+
+.export-modal.hidden {
+  display: none;
+}
+
+.export-modal .modal-card {
+  width: 100%;
+  max-width: 440px;
+  background: #0a0e16;
+  border: 1px solid var(--border-gold);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(245, 158, 11, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.export-modal .modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 12px;
+}
+
+.export-modal .modal-head h3 {
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  color: var(--gold-mid);
+  margin: 0;
+}
+
+

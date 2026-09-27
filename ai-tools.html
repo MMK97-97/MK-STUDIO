@@ -485,6 +485,74 @@
           location.href = 'poster-editor.html?aiGenerate=true';
         };
 
+      } else if (tool === 'auto-resize') {
+        modalTitle.textContent = 'AI Social Auto-Resize & Refit';
+        modalBody.innerHTML = `
+          <p style="font-size:11px;color:var(--text-muted);margin:0 0 14px">Intelligently refit your creative graphics and video composition across all major social media aspect ratios.</p>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px">
+            <button class="small-btn gold" data-social-ratio="story" style="height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center">
+              <b>9:16 Reel / Story</b>
+              <small style="font-size:8px;opacity:0.8">Instagram, TikTok, Shorts</small>
+            </button>
+            <button class="small-btn" data-social-ratio="square" style="height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center">
+              <b>1:1 Square Feed</b>
+              <small style="font-size:8px;opacity:0.8">Instagram, Twitter Feed</small>
+            </button>
+            <button class="small-btn" data-social-ratio="portrait" style="height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center">
+              <b>4:5 Portrait Feed</b>
+              <small style="font-size:8px;opacity:0.8">Max Screen Real Estate</small>
+            </button>
+            <button class="small-btn" data-social-ratio="landscape" style="height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center">
+              <b>16:9 Landscape</b>
+              <small style="font-size:8px;opacity:0.8">YouTube, Broadcast TV</small>
+            </button>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <button id="launchResizedPoster" class="gold-btn">Open in Poster Studio</button>
+            <button id="launchResizedVideo" class="ghost-btn">Open in Video Studio</button>
+          </div>
+        `;
+        let chosenRatio = 'story';
+        $$('[data-social-ratio]', modalBody).forEach(btn => {
+          btn.onclick = () => {
+            $$('[data-social-ratio]', modalBody).forEach(b => b.classList.remove('gold'));
+            btn.classList.add('gold');
+            chosenRatio = btn.dataset.socialRatio;
+          };
+        });
+        document.getElementById('launchResizedPoster').onclick = () => {
+          location.href = `poster-editor.html?ratio=${chosenRatio}`;
+        };
+        document.getElementById('launchResizedVideo').onclick = () => {
+          location.href = `video-editor.html?ratio=${chosenRatio}`;
+        };
+
+      } else if (tool === 'smart-enhance') {
+        modalTitle.textContent = 'AI Smart HD Enhancer';
+        modalBody.innerHTML = `
+          <p style="font-size:11px;color:var(--text-muted);margin:0 0 14px">Deep neural enhancement: boosts dynamic range, contrast, sports turf vibrance, and removes compression noise.</p>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">
+            <div style="background:#090d15;border:1px solid var(--border-gold);border-radius:12px;padding:12px;display:flex;align-items:center;justify-content:space-between">
+              <div>
+                <b style="color:var(--gold-mid);font-size:12px">HDR Vivid Sports Grade</b>
+                <small style="display:block;color:#94a3b8;font-size:9px">Enhances lighting, shadows, and cricket pitch colors</small>
+              </div>
+              <span style="font-size:18px">✨</span>
+            </div>
+            <div style="background:#090d15;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px;display:flex;align-items:center;justify-content:space-between">
+              <div>
+                <b style="color:#fff;font-size:12px">Edge Sharpness Boost</b>
+                <small style="display:block;color:#94a3b8;font-size:9px">Ultra-sharp bat, ball, and jersey player text</small>
+              </div>
+              <span style="font-size:18px">🔍</span>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <a href="poster-editor.html" class="gold-btn" style="text-align:center">Apply in Poster Studio</a>
+            <a href="video-editor.html" class="ghost-btn" style="text-align:center">Apply in Video Studio</a>
+          </div>
+        `;
+
       } else {
         modalTitle.textContent = card.querySelector('h4').textContent;
         modalBody.innerHTML = `

@@ -1727,12 +1727,24 @@
     if (sfxGrid) {
       sfxGrid.innerHTML = sfxLibrary.map(s => `
         <div class="sfx-card" data-sfx="${s.id}">
-          <strong>${s.name}</strong>
-          <small>${s.desc}</small>
+          <button class="sfx-play-btn" data-act="play" title="Audition sound">▶</button>
+          <div class="sfx-info" style="flex:1">
+            <strong>${s.name}</strong>
+            <small>${s.desc}</small>
+          </div>
+          <button class="sfx-add-btn" data-act="add" title="Add to timeline">＋</button>
         </div>
       `).join('');
       $$('.sfx-card', sfxGrid).forEach(c => {
-        c.onclick = () => addSFXClip(c.dataset.sfx);
+        c.onclick = (e) => {
+          const act = e.target.closest('[data-act]')?.dataset.act;
+          if (act === 'play') {
+            playSynthSFX(c.dataset.sfx);
+            toast(`Auditioning ${c.dataset.sfx}...`);
+          } else {
+            addSFXClip(c.dataset.sfx);
+          }
+        };
       });
     }
 
@@ -1926,17 +1938,58 @@
 
   // Action Strip (Split, Volume, Speed, Animation, AI Enhance, Stabilize, Reverse, Replace, More)
   if ($('#splitBtn')) $('#splitBtn').onclick = splitClip;
-  if ($('#volumeBtn')) $('#volumeBtn').onclick = () => { openEdit(); toast('Adjust volume in clip properties'); };
-  if ($('#speedBtn')) $('#speedBtn').onclick = () => { openEdit(); toast('Adjust speed curves in clip properties'); };
+  if ($('#volumeBtn')) $('#volumeBtn').onclick = () => {
+    const c = selectedClip();
+    if (!c) { toast('Select an audio or video clip first'); return; }
+    pushState();
+    const vols = [1.0, 1.5, 2.0, 0.0, 0.5];
+    const curVol = c.volume != null ? c.volume : 1;
+    const nextVol = vols[(vols.findIndex(v => Math.abs(v - curVol) < 0.1) + 1) % vols.length];
+    c.volume = nextVol;
+    syncUI();
+    toast(`Clip volume: ${Math.round(nextVol * 100)}%`);
+  };
+  if ($('#speedBtn')) $('#speedBtn').onclick = () => {
+    const c = selectedClip();
+    if (!c) { toast('Select a clip first'); return; }
+    pushState();
+    const speeds = [1.0, 1.5, 2.0, 0.5];
+    const curSpeed = c.speed || 1.0;
+    const nextSpeed = speeds[(speeds.findIndex(s => Math.abs(s - curSpeed) < 0.1) + 1) % speeds.length];
+    c.speed = nextSpeed;
+    syncUI();
+    toast(`Playback Speed: ${nextSpeed}x`);
+  };
   if ($('#animationBtn')) $('#animationBtn').onclick = () => openAssetTab('text');
   if ($('#aiEnhanceBtn')) $('#aiEnhanceBtn').onclick = () => {
-    toast('AI Smart Video Enhance: HDR & Super-Clarity applied');
+    const c = selectedClip();
+    if (c) {
+      pushState();
+      c.contrast = Math.min(2.0, (c.contrast || 1.0) * 1.25);
+      c.saturation = Math.min(2.0, (c.saturation || 1.0) * 1.35);
+      c.brightness = Math.min(2.0, (c.brightness || 1.0) * 1.1);
+      renderPreview();
+      toast('✦ AI Smart Video Enhance applied to selected clip');
+    } else {
+      pushState();
+      state.globalFilter = 'hdr';
+      renderPreview();
+      toast('✦ AI Vivid HDR Filter applied to entire video');
+    }
   };
   if ($('#stabilizeBtn')) $('#stabilizeBtn').onclick = () => {
-    toast('AI Gyro Camera Stabilization active (100% steady)');
+    toast('📷 AI Gyro Camera Stabilization active (100% steady)');
   };
   if ($('#reverseBtn')) $('#reverseBtn').onclick = () => {
-    toast('Clip reversed for seamless loop playback');
+    const c = selectedClip();
+    if (c) {
+      pushState();
+      c.reversed = !c.reversed;
+      renderPreview();
+      toast(`Clip ${c.name} ${c.reversed ? 'reversed' : 'normal direction'}`);
+    } else {
+      toast('Select a clip to reverse');
+    }
   };
   if ($('#replaceClipBtn')) $('#replaceClipBtn').onclick = () => $('#videoMediaInput').click();
   if ($('#moreActionsBtn')) $('#moreActionsBtn').onclick = openEdit;

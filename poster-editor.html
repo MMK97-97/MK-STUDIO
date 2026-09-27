@@ -193,6 +193,7 @@
       <div class="sheet-content">
         <div class="sheet-tabs">
           <button class="sheet-tab active" data-tab="templates">Templates</button>
+          <button class="sheet-tab" data-tab="elements">Elements & Badges</button>
           <button class="sheet-tab" data-tab="media">Media & Photos</button>
           <button class="sheet-tab" data-tab="layers">Layer Stack</button>
         </div>
@@ -200,6 +201,61 @@
           <div class="editor-search"><input id="editorTemplateSearch" placeholder="Search cricket templates..."></div>
           <div id="editorTemplateCount" style="font-size:8px;color:#777;margin-bottom:8px"></div>
           <div id="editorTemplateGrid" class="template-mini-grid"></div>
+        </section>
+        <section data-panel="elements" class="hidden">
+          <div class="elements-library-container">
+            <div class="sheet-subhead">Match Day & Broadcast Badges</div>
+            <div class="badges-chip-grid" id="badgesChipGrid">
+              <button class="badge-chip gold" data-badge="match-day">⚡ MATCH DAY</button>
+              <button class="badge-chip crimson" data-badge="vs">VS</button>
+              <button class="badge-chip neon" data-badge="live">● LIVE NOW</button>
+              <button class="badge-chip gold" data-badge="final">🏆 THE FINAL</button>
+              <button class="badge-chip amber" data-badge="powerplay">💥 POWERPLAY</button>
+              <button class="badge-chip purple" data-badge="max6">SIX! MAXIMUM</button>
+              <button class="badge-chip crimson" data-badge="wicket">OUT! WICKET</button>
+              <button class="badge-chip gold" data-badge="champions">👑 CHAMPIONS</button>
+            </div>
+
+            <div class="sheet-subhead" style="margin-top:14px">Geometric Shapes & Banners</div>
+            <div class="shapes-preview-grid" id="shapesPreviewGrid">
+              <button class="shape-card" data-shape="pill">
+                <div class="shape-icon-preview pill-shape"></div>
+                <span>Pill Banner</span>
+              </button>
+              <button class="shape-card" data-shape="shield">
+                <div class="shape-icon-preview shield-shape">🛡</div>
+                <span>Shield Emblem</span>
+              </button>
+              <button class="shape-card" data-shape="slash">
+                <div class="shape-icon-preview slash-shape"></div>
+                <span>Diagonal Slash</span>
+              </button>
+              <button class="shape-card" data-shape="circle">
+                <div class="shape-icon-preview circle-shape"></div>
+                <span>Circle Badge</span>
+              </button>
+              <button class="shape-card" data-shape="scorebar">
+                <div class="shape-icon-preview scorebar-shape"></div>
+                <span>Score Ticker</span>
+              </button>
+              <button class="shape-card" data-shape="star">
+                <div class="shape-icon-preview star-shape">★</div>
+                <span>Star Burst</span>
+              </button>
+            </div>
+
+            <div class="sheet-subhead" style="margin-top:14px">Cricket Stickers & Graphics</div>
+            <div class="stickers-emoji-grid" id="stickersEmojiGrid">
+              <button class="sticker-btn" data-sticker="🏏" data-name="Cricket Bat">🏏</button>
+              <button class="sticker-btn" data-sticker="🏆" data-name="Trophy">🏆</button>
+              <button class="sticker-btn" data-sticker="⚡" data-name="Lightning">⚡</button>
+              <button class="sticker-btn" data-sticker="🔥" data-name="Fire">🔥</button>
+              <button class="sticker-btn" data-sticker="👑" data-name="Crown">👑</button>
+              <button class="sticker-btn" data-sticker="🎯" data-name="Target">🎯</button>
+              <button class="sticker-btn" data-sticker="🌟" data-name="Star">🌟</button>
+              <button class="sticker-btn" data-sticker="🏟️" data-name="Stadium">🏟️</button>
+            </div>
+          </div>
         </section>
         <section data-panel="media" class="hidden">
           <div class="asset-grid-editor">
@@ -236,6 +292,45 @@
       <button id="quickEdit">Edit</button>
       <button id="quickDuplicate">Duplicate</button>
       <button id="quickDelete" class="danger">Delete</button>
+    </div>
+
+    <!-- POSTER ULTRA HD EXPORT MODAL -->
+    <div id="posterExportModal" class="export-modal hidden">
+      <div class="modal-card">
+        <div class="modal-head">
+          <h3>Ultra HD Poster Export</h3>
+          <button id="closePosterExportModal" class="sheet-close">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="export-presets-row">
+            <div class="export-opt">
+              <label>Format</label>
+              <select id="posterExportFormat">
+                <option value="png" selected>PNG (Lossless Ultra HD)</option>
+                <option value="jpeg">JPG (High Quality Web)</option>
+                <option value="webp">WebP (Modern Compact)</option>
+              </select>
+            </div>
+            <div class="export-opt">
+              <label>Resolution Scale</label>
+              <select id="posterExportScale">
+                <option value="1">1x Standard (1080px)</option>
+                <option value="2" selected>2x Retina HD (2160px)</option>
+                <option value="3">3x Ultra 4K (3240px)</option>
+              </select>
+            </div>
+          </div>
+          <div class="render-info-box" style="margin: 12px 0">
+            <div class="info-item"><span>Output Size:</span><b id="posterExportDim">2160 × 2700 px</b></div>
+            <div class="info-item"><span>Color Space:</span><b>sRGB 32-bit</b></div>
+            <div class="info-item"><span>Quality:</span><b>100% Maximum</b></div>
+          </div>
+          <div class="modal-foot" style="display:flex;gap:10px">
+            <button id="posterCopyClipboardBtn" class="small-btn" style="flex:1;height:40px;border-radius:10px;font-size:11px">📋 Copy to Clipboard</button>
+            <button id="posterDownloadBtn" class="gold-btn" style="flex:1;height:40px;border-radius:10px;font-size:11px">📥 Download Graphic</button>
+          </div>
+        </div>
+      </div>
     </div>
 
   </div>
