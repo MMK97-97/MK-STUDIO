@@ -113,6 +113,22 @@ function drawLayer(l){
     }
     ctx.restore();
   }
+  if(l.type==='draw' && l.points && l.points.length){
+    ctx.save();
+    ctx.globalAlpha = l.opacity ?? 1;
+    if(l.blendMode) ctx.globalCompositeOperation = l.blendMode;
+    ctx.strokeStyle = l.color || '#f59e0b';
+    ctx.lineWidth = l.size || 8;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(l.points[0].x, l.points[0].y);
+    for(let i=1; i<l.points.length; i++){
+      ctx.lineTo(l.points[i].x, l.points[i].y);
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
 }
 
 function drawSelection(l){
@@ -163,7 +179,13 @@ function render(){
   for(const l of state.layers)drawLayer(l);
   drawSelection(selected());
   fitCss();
-  $('#quickSelected').classList.toggle('show',!!selected());
+  const qs = $('#quickSelected');
+  if(qs){
+    const tray = $('#effectsSubTray');
+    const isTrayOpen = tray && !tray.classList.contains('hidden');
+    qs.style.bottom = isTrayOpen ? '195px' : '72px';
+    qs.classList.toggle('show', !!selected());
+  }
 }
 
 function fitCss(){
@@ -190,8 +212,29 @@ function hitHandle(l, px, py) {
   return Math.hypot(px - hx, py - hy) <= 24;
 }
 
+let drawMode = false;
+let currentStroke = null;
+
 canvas.addEventListener('pointerdown',e=>{
   const p=pt(e);
+  if(drawMode){
+    push();
+    currentStroke = {
+      id: uid(),
+      type: 'draw',
+      name: 'Brush Stroke',
+      points: [{x: p.x, y: p.y}],
+      color: '#f59e0b',
+      size: 8,
+      visible: true,
+      locked: false
+    };
+    state.layers.push(currentStroke);
+    state.selected = currentStroke.id;
+    render();
+    canvas.setPointerCapture(e.pointerId);
+    return;
+  }
   const cur=selected();
   if(cur && hitHandle(cur, p.x, p.y)){
     push();
@@ -202,7 +245,10 @@ canvas.addEventListener('pointerdown',e=>{
   const l=hit(p.x,p.y);
   if(l){
     state.selected=l.id;renderLayers();renderInspector();render();
-    if(!l.locked){push();drag={id:l.id,mode:'move',sx:p.x,sy:p.y,x:l.x,y:l.y}}
+    if(!l.locked){
+      push();
+      drag={id:l.id,mode:'move',sx:p.x,sy:p.y,x:l.x,y:l.y,origPoints:(l.type==='draw'&&l.points?clone(l.points):null)};
+    }
   }else{
     state.selected=null;renderLayers();renderInspector();render();
   }
@@ -210,18 +256,49 @@ canvas.addEventListener('pointerdown',e=>{
 });
 
 canvas.addEventListener('pointermove',e=>{
+  const p=pt(e);
+  if(drawMode && currentStroke){
+    currentStroke.points.push({x: p.x, y: p.y});
+    render();
+    return;
+  }
   if(!drag)return;
-  const p=pt(e),l=selected();if(!l)return;
+  const l=selected();if(!l)return;
   if(drag.mode==='resize'){
     l.w=Math.max(40, Math.round(drag.w+(p.x-drag.sx)));
     l.h=Math.max(20, Math.round(drag.h+(p.y-drag.sy)));
   }else{
-    l.x=Math.round(drag.x+p.x-drag.sx);
-    l.y=Math.round(drag.y+p.y-drag.sy);
+    const dx = Math.round(p.x-drag.sx);
+    const dy = Math.round(p.y-drag.sy);
+    if(l.type==='draw' && l.points && drag.origPoints){
+      l.points = drag.origPoints.map(pt => ({ x: pt.x + dx, y: pt.y + dy }));
+    }
+    l.x=Math.round(drag.x+dx);
+    l.y=Math.round(drag.y+dy);
   }
   render();
 });
-canvas.addEventListener('pointerup',()=>drag=null);
+
+canvas.addEventListener('pointerup',()=>{
+  if(drawMode && currentStroke){
+    if(currentStroke.points.length > 1){
+      let minX=Infinity, minY=Infinity, maxX=-Infinity, maxY=-Infinity;
+      for(const pt of currentStroke.points){
+        if(pt.x < minX) minX = pt.x;
+        if(pt.y < minY) minY = pt.y;
+        if(pt.x > maxX) maxX = pt.x;
+        if(pt.y > maxY) maxY = pt.y;
+      }
+      currentStroke.x = minX;
+      currentStroke.y = minY;
+      currentStroke.w = Math.max(30, maxX - minX);
+      currentStroke.h = Math.max(30, maxY - minY);
+    }
+    currentStroke = null;
+    syncAll();
+  }
+  drag=null;
+});
 
 function renderTemplates(){
   const q=($('#editorTemplateSearch').value||'').toLowerCase(),list=T.filter(t=>`${t.name} ${t.title} ${t.category}`.toLowerCase().includes(q));
@@ -240,7 +317,7 @@ function renderLayers(){
   const list=[...state.layers].reverse();
   const html=list.map(l=>{
     const isAct=l.id===state.selected;
-    const thumb=l.type==='image'?`<img src="${l.src}">`:(l.type==='text'?'T':'❖');
+    const thumb=l.type==='image'?`<img src="${l.src}">`:(l.type==='text'?'T':(l.type==='draw'?'✎':'❖'));
     return `
       <div class="floating-layer-row ${isAct?'active':''}" data-id="${l.id}">
         <span class="fl-eye" data-act="vis">${l.visible===false?'○':'◉'}</span>
@@ -255,17 +332,23 @@ function renderLayers(){
   if(fList)fList.innerHTML=html;
 
   const sList=$('#layerList');
-  if(sList)sList.innerHTML=list.map(l=>`<div class="layer-row ${l.id===state.selected?'active':''}" data-id="${l.id}"><span class="type">${l.type==='text'?'T':l.type==='image'?'▧':'◆'}</span><div><b>${l.name||l.type}</b><small>${l.visible===false?'Hidden':l.locked?'Locked':'Editable'}</small></div><div><button data-act="vis">${l.visible===false?'○':'◉'}</button><button data-act="lock">${l.locked?'🔒':'🔓'}</button></div></div>`).join('');
+  if(sList)sList.innerHTML=list.map(l=>`<div class="layer-row ${l.id===state.selected?'active':''}" data-id="${l.id}"><span class="type">${l.type==='text'?'T':l.type==='image'?'▧':(l.type==='draw'?'✎':'◆')}</span><div><b>${l.name||l.type}</b><small>${l.visible===false?'Hidden':l.locked?'Locked':'Editable'}</small></div><div><button data-act="vis">${l.visible===false?'○':'◉'}</button><button data-act="lock">${l.locked?'🔒':'🔓'}</button></div></div>`).join('');
 }
 
 function handleLayerClick(e){
   const row=e.target.closest('[data-id]');if(!row)return;
-  const l=state.layers.find(x=>x.id===row.dataset.id),act=e.target.dataset.act;
+  const l=state.layers.find(x=>x.id===row.dataset.id);if(!l)return;
+  const act=e.target.dataset.act;
   if(act==='vis'){
     push();l.visible=l.visible===false?true:false;renderLayers();render();return;
   }
   if(act==='lock'){
     push();l.locked=!l.locked;renderLayers();return;
+  }
+  if(e.target.closest('.fl-more')){
+    state.selected=l.id;
+    openEdit();
+    return;
   }
   state.selected=l.id;renderLayers();renderInspector();render();
 }
@@ -296,6 +379,7 @@ function renderInspector(){
   let html=`<section class="inspector-section"><h4>Transform</h4><div class="row2">${ctrl('X',l.x,'x','number')}${ctrl('Y',l.y,'y','number')}</div><div class="row2">${ctrl('Width',l.w,'w','number')}${ctrl('Height',l.h,'h','number')}</div>${ctrl('Rotation',l.rotation||0,'rotation','range',-180,180,1)}${ctrl('Opacity',Math.round((l.opacity??1)*100),'opacity','range',0,100,1)}</section>`;
   if(l.type==='text')html+=`<section class="inspector-section"><h4>Text</h4><label class="control"><span>Content</span><textarea data-key="text">${l.text||''}</textarea></label><div class="row2">${ctrl('Size',l.size,'size','number')}${ctrl('Color',l.color,'color','color')}</div><div class="row2"><label class="control"><span>Font</span><select data-key="font"><option>Montserrat</option><option>Anton</option><option>Bebas Neue</option><option>Teko</option><option>Cinzel</option><option>Inter</option><option>Impact</option><option>Arial</option><option>Georgia</option></select></label><label class="control"><span>Align</span><select data-key="align"><option>left</option><option>center</option><option>right</option></select></label></div>${ctrl('Shadow',l.shadow||0,'shadow','range',0,40,1)}<div class="row2">${ctrl('Stroke',l.stroke||'#000000','stroke','color')}${ctrl('Stroke width',l.strokeWidth||0,'strokeWidth','number')}</div></section>`;
   if(l.type==='shape')html+=`<section class="inspector-section"><h4>Shape</h4>${ctrl('Color',l.color,'color','color')}</section>`;
+  if(l.type==='draw')html+=`<section class="inspector-section"><h4>Brush Stroke</h4>${ctrl('Color',l.color||'#f59e0b','color','color')}${ctrl('Stroke Width',l.size||8,'size','range',1,50,1)}</section>`;
   if(l.type==='image')html+=`<section class="inspector-section"><h4>Color & Light Adjustments</h4>${ctrl('Brightness',l.brightness||100,'brightness','range',0,200,1)}${ctrl('Contrast',l.contrast||100,'contrast','range',0,200,1)}${ctrl('Saturation',l.saturation||100,'saturation','range',0,200,1)}${ctrl('Hue',l.hue||0,'hue','range',-180,180,1)}${ctrl('Blur',l.blur||0,'blur','range',0,20,.5)}${ctrl('Sepia',l.sepia||0,'sepia','range',0,100,1)}</section>`;
   box.innerHTML=html;
   $$('[data-key]',box).forEach(el=>{
@@ -327,11 +411,29 @@ function addImage(src,name='Photo'){
   state.layers.push(l);state.selected=l.id;syncAll();toast('Photo added');
 }
 
-$('#uploadImageBtn').onclick=()=>$('#imageInput').click();
+let isReplacing = false;
+if($('#uploadImageBtn')) $('#uploadImageBtn').onclick=()=>{ isReplacing = false; $('#imageInput').click(); };
+if($('#railAddPhoto')) $('#railAddPhoto').onclick=()=>{ isReplacing = false; $('#imageInput').click(); };
+
 $('#imageInput').onchange=e=>{
   const f=e.target.files?.[0];if(!f)return;
   const r=new FileReader();
-  r.onload=()=>{addImage(r.result,f.name);closeSheets()};
+  r.onload=()=>{
+    const cur = selected();
+    if(isReplacing && cur && cur.type==='image'){
+      push();
+      cur.src = r.result;
+      cur.name = f.name;
+      imageCache.clear();
+      syncAll();
+      toast('Image replaced');
+    } else {
+      addImage(r.result, f.name);
+      closeSheets();
+    }
+    isReplacing = false;
+    e.target.value = '';
+  };
   r.readAsDataURL(f);
 };
 
@@ -341,19 +443,26 @@ $$('.rail-btn').forEach(b=>{
     $$('.rail-btn').forEach(btn=>btn.classList.remove('active'));
     b.classList.add('active');
     const r=b.dataset.rail;
-    if(r==='templates')openAssetTab('templates');
-    else if(r==='text')addText();
-    else if(r==='elements')addShape();
-    else if(r==='photos')$('#uploadImageBtn').click();
-    else if(r==='background'){state.selected=null;renderInspector();openEdit()}
-    else if(r==='draw'){toast('Drawing mode active');}
+    if(r==='select'){
+      drawMode = false;
+      toast('Select mode active');
+    }
+    else if(r==='templates'){ drawMode = false; openAssetTab('templates'); }
+    else if(r==='text'){ drawMode = false; addText(); }
+    else if(r==='elements'){ drawMode = false; addShape(); }
+    else if(r==='photos'){ drawMode = false; isReplacing = false; $('#imageInput').click(); }
+    else if(r==='background'){ drawMode = false; state.selected=null; renderInspector(); openEdit(); }
+    else if(r==='draw'){
+      drawMode = !drawMode;
+      b.classList.toggle('active', drawMode);
+      toast(drawMode ? '✎ Freehand Brush active — draw on canvas' : 'Brush deactivated');
+    }
+    else if(r==='more'){ drawMode = false; openAssetTab('templates'); }
   });
 });
 
-$('#railAddText').onclick=addText;
-$('#railAddShape').onclick=addShape;
-$('#mediaAddText').onclick=()=>{addText();closeSheets()};
-$('#floatingAddLayerBtn').onclick=()=>{addText();};
+if($('#mediaAddText')) $('#mediaAddText').onclick=()=>{addText();closeSheets()};
+if($('#floatingAddLayerBtn')) $('#floatingAddLayerBtn').onclick=()=>{addText();};
 
 // Toggle Floating Layer Panel
 const toggleLpBtn=$('#toggleLayerPanelBtn');
@@ -400,22 +509,38 @@ $('#toolAdjust').onclick=()=>{
   if(!selected()){state.selected=state.layers[state.layers.length-1]?.id||null}
   openEdit();
 };
-$('#toolFilters').onclick=()=>{openEdit()};
+$('#toolFilters').onclick=()=>{
+  const tray=$('#effectsSubTray');
+  if(tray) tray.classList.remove('hidden');
+  switchCategory('color');
+};
 $('#toolEffects').onclick=()=>{
-  $('#effectsSubTray').classList.toggle('hidden');
+  const tray=$('#effectsSubTray');
+  if(tray){
+    tray.classList.toggle('hidden');
+    if(!tray.classList.contains('hidden')) switchCategory('effects');
+    render();
+  }
 };
 $('#toolAiEnhance').onclick=()=>{
-  const l=selected();
+  let l=selected();
+  if(!l) l=state.layers.find(x=>x.type==='image') || state.layers.find(x=>x.type==='text');
   if(!l){toast('Select a layer to enhance');return}
   push();
-  l.contrast=(l.contrast||100)*1.15;
-  l.brightness=(l.brightness||100)*1.05;
-  l.saturation=(l.saturation||100)*1.1;
+  if(l.type==='image'){
+    l.contrast=Math.min(200, Math.round((l.contrast||100)*1.18));
+    l.brightness=Math.min(200, Math.round((l.brightness||100)*1.06));
+    l.saturation=Math.min(200, Math.round((l.saturation||100)*1.15));
+  } else if(l.type==='text'){
+    l.shadow=Math.min(40, (l.shadow||0)+10);
+    l.strokeWidth=Math.max(1, (l.strokeWidth||0)+1);
+  }
   render();
   toast('AI Smart Enhance applied');
 };
 $('#toolRemoveBg').onclick=()=>{
-  const l=selected();
+  let l=selected();
+  if(!l||l.type!=='image') l=state.layers.find(x=>x.type==='image');
   if(!l||l.type!=='image'){toast('Select an image layer first');return}
   const im=getImage(l.src);if(!im.complete){toast('Image loading...');return}
   push();
@@ -438,19 +563,19 @@ $('#toolRemoveBg').onclick=()=>{
 if($('#toolReplace')){
   $('#toolReplace').onclick=()=>{
     const l=selected();
-    if(l && l.type==='image'){
-      $('#imageInput').click();
-    } else if(l && l.type==='text'){
+    if(l && l.type==='text'){
       openEdit();
       toast('Edit text properties');
-    } else {
-      $('#imageInput').click();
+      return;
     }
+    isReplacing = !!(l && l.type==='image');
+    $('#imageInput').click();
   };
 }
 if($('#toolMask')){
   $('#toolMask').onclick=()=>{
-    const l=selected();
+    let l=selected();
+    if(!l) l=state.layers.find(x=>x.type==='image');
     if(!l){toast('Select a layer to mask');return;}
     push();
     l.borderRadius = (l.borderRadius ? 0 : 40);
@@ -460,7 +585,8 @@ if($('#toolMask')){
 }
 if($('#toolBlend')){
   $('#toolBlend').onclick=()=>{
-    const l=selected();
+    let l=selected();
+    if(!l) l=state.layers[state.layers.length-1];
     if(!l){toast('Select a layer to blend');return;}
     push();
     const modes=['source-over','screen','multiply','overlay','lighter'];
@@ -471,38 +597,191 @@ if($('#toolBlend')){
   };
 }
 
-// Preset Cards Filter Grading (Image 5)
-$$('.preset-card').forEach(card=>{
-  card.addEventListener('click',()=>{
-    $$('.preset-card').forEach(c=>c.classList.remove('active'));
-    card.classList.add('active');
-    const p=card.dataset.preset;
-    applyPresetFilter(p);
-  });
-});
+// 6 Category Presets System (Image 5)
+const categoryPresets = {
+  effects: [
+    { id: 'none', name: 'None', icon: '⊘' },
+    { id: 'cinematic', name: 'Cinematic', filter: 'contrast(125%) brightness(105%) saturate(115%)' },
+    { id: 'stadium-glow', name: 'Stadium Glow', filter: 'contrast(110%) brightness(130%) sepia(20%)' },
+    { id: 'golden-hour', name: 'Golden Hour', filter: 'contrast(115%) sepia(45%) saturate(140%)' },
+    { id: 'epic-hdr', name: 'Epic HDR', filter: 'contrast(140%) brightness(110%) saturate(135%)' },
+    { id: 'film-look', name: 'Film Look', filter: 'contrast(95%) sepia(25%) saturate(85%)' },
+    { id: 'drama', name: 'Drama', filter: 'contrast(150%) brightness(90%) saturate(120%)' }
+  ],
+  color: [
+    { id: 'vibrant', name: 'Vibrant', filter: 'saturate(180%) contrast(110%)' },
+    { id: 'vintage', name: 'Vintage', filter: 'sepia(70%) contrast(90%)' },
+    { id: 'mono', name: 'Monochrome', filter: 'grayscale(100%) contrast(130%)' },
+    { id: 'cool-blue', name: 'Cool Cyan', filter: 'hue-rotate(180deg) saturate(130%)' },
+    { id: 'fire-red', name: 'Fire Red', filter: 'hue-rotate(-40deg) saturate(160%)' },
+    { id: 'cyber-neon', name: 'Cyber Neon', filter: 'saturate(200%) contrast(140%)' }
+  ],
+  light: [
+    { id: 'bright', name: 'High Key', filter: 'brightness(135%) contrast(105%)' },
+    { id: 'spotlight', name: 'Spotlight', filter: 'brightness(120%) contrast(135%)' },
+    { id: 'moody', name: 'Low Key', filter: 'brightness(75%) contrast(140%)' },
+    { id: 'soft-light', name: 'Soft Wash', filter: 'brightness(110%) contrast(85%)' },
+    { id: 'backlight', name: 'Backlit', filter: 'brightness(95%) contrast(160%)' }
+  ],
+  shadow: [
+    { id: 'deep-black', name: 'Deep Black', filter: 'contrast(160%) brightness(85%)' },
+    { id: 'fade-shadow', name: 'Fade Shadow', filter: 'contrast(80%) brightness(115%)' },
+    { id: 'rich-depth', name: 'Rich Depth', filter: 'contrast(130%)' },
+    { id: 'matte-crush', name: 'Matte Crush', filter: 'sepia(15%) contrast(125%)' }
+  ],
+  glow: [
+    { id: 'golden-aura', name: 'Gold Aura', filter: 'sepia(50%) brightness(125%) saturate(160%)' },
+    { id: 'neon-cyan', name: 'Neon Cyan', filter: 'hue-rotate(170deg) brightness(120%)' },
+    { id: 'stadium-beam', name: 'Stadium Beam', filter: 'brightness(145%) contrast(120%)' },
+    { id: 'amber-fire', name: 'Amber Fire', filter: 'sepia(60%) hue-rotate(-20deg) brightness(115%)' }
+  ],
+  blur: [
+    { id: 'crisp', name: 'Crisp (0px)', filter: 'none' },
+    { id: 'soft-lens', name: 'Soft Lens', filter: 'blur(1px)' },
+    { id: 'depth-focus', name: 'Depth Blur', filter: 'blur(3px)' },
+    { id: 'heavy-blur', name: 'Heavy Blur', filter: 'blur(6px)' }
+  ]
+};
 
-function applyPresetFilter(p){
-  push();
-  const l=selected();
-  const target=l&&l.type==='image'?l:null;
-  if(p==='none'){
-    if(target){target.brightness=100;target.contrast=100;target.saturation=100;target.sepia=0;}
-  }else if(p==='cinematic'){
-    if(target){target.brightness=105;target.contrast=130;target.saturation=115;target.sepia=10;}
-  }else if(p==='stadium-glow'){
-    if(target){target.brightness=125;target.contrast=120;target.saturation=130;target.sepia=15;}
-  }else if(p==='golden-hour'){
-    if(target){target.brightness=110;target.contrast=120;target.saturation=145;target.sepia=45;}
-  }else if(p==='epic-hdr'){
-    if(target){target.brightness=115;target.contrast=145;target.saturation=140;target.sepia=0;}
-  }else if(p==='film-look'){
-    if(target){target.brightness=100;target.contrast=95;target.saturation=90;target.sepia=25;}
-  }else if(p==='drama'){
-    if(target){target.brightness=90;target.contrast=155;target.saturation=125;target.sepia=5;}
-  }
-  render();
-  toast(`Applied ${p} filter`);
+let currentTrayCategory = 'effects';
+let activePresetId = 'cinematic';
+
+function switchCategory(cat){
+  currentTrayCategory = cat;
+  $$('.tray-cat-tab').forEach(t=>t.classList.toggle('active', t.dataset.cat===cat));
+  renderTrayPresets(cat);
 }
+
+function renderTrayPresets(cat = 'effects'){
+  currentTrayCategory = cat;
+  const scroll = $('#trayPresetsScroll');
+  if(!scroll) return;
+  const list = categoryPresets[cat] || categoryPresets.effects;
+  scroll.innerHTML = list.map(item => `
+    <div class="preset-card ${item.id === activePresetId ? 'active' : ''}" data-preset="${item.id}" data-cat="${cat}">
+      <div class="preset-thumb">
+        ${item.icon ? `<span style="font-size:22px;color:#64748b">${item.icon}</span>` : `<img src="fwcwl-logo.jpeg" alt="${item.name}" style="filter:${item.filter || 'none'}">`}
+      </div>
+      <span>${item.name}</span>
+    </div>
+  `).join('');
+
+  $$('.preset-card', scroll).forEach(card => {
+    card.onclick = () => {
+      $$('.preset-card', scroll).forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      activePresetId = card.dataset.preset;
+      applyUniversalPreset(activePresetId, cat);
+    };
+  });
+}
+
+function applyUniversalPreset(p, cat = 'effects'){
+  push();
+  let l = selected();
+  if(!l){
+    l = state.layers.find(x => x.type === 'image');
+  }
+
+  if(l && l.type === 'image'){
+    if(p === 'none' || p === 'crisp'){
+      l.brightness = 100; l.contrast = 100; l.saturation = 100; l.sepia = 0; l.hue = 0; l.blur = 0;
+    } else if(p === 'cinematic'){
+      l.brightness = 105; l.contrast = 130; l.saturation = 115; l.sepia = 10;
+    } else if(p === 'stadium-glow'){
+      l.brightness = 125; l.contrast = 120; l.saturation = 130; l.sepia = 15;
+    } else if(p === 'golden-hour'){
+      l.brightness = 110; l.contrast = 120; l.saturation = 145; l.sepia = 45;
+    } else if(p === 'epic-hdr'){
+      l.brightness = 115; l.contrast = 145; l.saturation = 140; l.sepia = 0;
+    } else if(p === 'film-look'){
+      l.brightness = 100; l.contrast = 95; l.saturation = 90; l.sepia = 25;
+    } else if(p === 'drama'){
+      l.brightness = 90; l.contrast = 155; l.saturation = 125; l.sepia = 5;
+    } else if(p === 'vibrant'){
+      l.saturation = 180; l.contrast = 115;
+    } else if(p === 'vintage'){
+      l.sepia = 70; l.contrast = 90; l.brightness = 105;
+    } else if(p === 'mono'){
+      l.saturation = 0; l.contrast = 135;
+    } else if(p === 'cool-blue'){
+      l.hue = 180; l.saturation = 120;
+    } else if(p === 'fire-red'){
+      l.hue = -40; l.saturation = 150;
+    } else if(p === 'cyber-neon'){
+      l.saturation = 190; l.contrast = 140;
+    } else if(p === 'bright'){
+      l.brightness = 135; l.contrast = 105;
+    } else if(p === 'spotlight'){
+      l.brightness = 120; l.contrast = 135;
+    } else if(p === 'moody'){
+      l.brightness = 75; l.contrast = 140;
+    } else if(p === 'soft-light'){
+      l.brightness = 110; l.contrast = 85;
+    } else if(p === 'backlight'){
+      l.brightness = 95; l.contrast = 160;
+    } else if(p === 'deep-black'){
+      l.contrast = 160; l.brightness = 85;
+    } else if(p === 'fade-shadow'){
+      l.contrast = 80; l.brightness = 115;
+    } else if(p === 'rich-depth'){
+      l.contrast = 130;
+    } else if(p === 'matte-crush'){
+      l.sepia = 15; l.contrast = 125;
+    } else if(p === 'golden-aura'){
+      l.sepia = 40; l.brightness = 125; l.saturation = 150;
+    } else if(p === 'neon-cyan'){
+      l.hue = 170; l.brightness = 118;
+    } else if(p === 'stadium-beam'){
+      l.brightness = 145; l.contrast = 120;
+    } else if(p === 'amber-fire'){
+      l.sepia = 50; l.hue = -20; l.brightness = 115;
+    } else if(p === 'soft-lens'){
+      l.blur = 1;
+    } else if(p === 'depth-focus'){
+      l.blur = 3;
+    } else if(p === 'heavy-blur'){
+      l.blur = 6;
+    }
+  } else if(l && l.type === 'text'){
+    if(cat === 'glow' || cat === 'shadow'){
+      l.shadow = p === 'none' ? 0 : 25;
+      l.stroke = (p === 'neon-cyan' ? '#38bdf8' : (p === 'golden-aura' ? '#f59e0b' : '#000000'));
+      l.strokeWidth = Math.max(2, l.strokeWidth || 3);
+    } else if(cat === 'color'){
+      if(p === 'vibrant' || p === 'golden-hour') l.color = '#fcd34d';
+      else if(p === 'cool-blue') l.color = '#38bdf8';
+      else if(p === 'fire-red') l.color = '#ef4444';
+      else if(p === 'mono') l.color = '#ffffff';
+      else if(p === 'cyber-neon') l.color = '#f43f5e';
+    }
+  } else if(l && l.type === 'shape'){
+    if(cat === 'color' || cat === 'effects'){
+      if(p === 'cool-blue') l.color = '#0284c7';
+      else if(p === 'fire-red') l.color = '#dc2626';
+      else if(p === 'mono') l.color = '#1e293b';
+      else if(p === 'cyber-neon') l.color = '#8b5cf6';
+      else if(p === 'golden-hour' || p === 'golden-aura') l.color = '#f59e0b';
+    }
+  } else {
+    // Background tinting
+    if(p === 'cool-blue') state.bg = '#051329';
+    else if(p === 'fire-red') state.bg = '#1a0505';
+    else if(p === 'cyber-neon') state.bg = '#130524';
+    else if(p === 'golden-hour') state.bg = '#191104';
+    else if(p === 'mono') state.bg = '#111827';
+    else if(p === 'none') state.bg = '#040711';
+  }
+
+  render();
+  renderInspector();
+  toast(`Applied ${p} (${cat})`);
+}
+
+$$('.tray-cat-tab').forEach(tab=>{
+  tab.onclick=()=>switchCategory(tab.dataset.cat);
+});
+renderTrayPresets('effects');
 
 function del(){
   const i=state.layers.findIndex(x=>x.id===state.selected);

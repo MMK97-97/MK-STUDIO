@@ -1019,6 +1019,10 @@
           <button id="clearKfBtn" class="small-btn danger">Clear Keyframes</button>
         </div>
       </section>
+      <div class="sheet-footer" style="display:flex;gap:8px;margin-top:16px">
+        <button id="inspectDupClip" class="small-btn">Duplicate Clip</button>
+        <button id="inspectDelClip" class="small-btn danger">Delete Clip</button>
+      </div>
     `;
 
     box.innerHTML = h;
@@ -1051,6 +1055,20 @@
         c.keyframes = [];
         syncUI();
         toast('Keyframes cleared');
+      };
+    }
+
+    if ($('#inspectDupClip')) {
+      $('#inspectDupClip').onclick = () => {
+        duplicateClip();
+        closeSheets();
+      };
+    }
+
+    if ($('#inspectDelClip')) {
+      $('#inspectDelClip').onclick = () => {
+        deleteClip();
+        closeSheets();
       };
     }
   }
