@@ -1780,8 +1780,8 @@ body.editor-page {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 8px 0;
-  gap: 8px;
+  padding: 4px 0;
+  gap: 4px;
   overflow-y: auto;
   scrollbar-width: none;
   z-index: 50;
@@ -1793,10 +1793,11 @@ body.editor-page {
 
 .rail-btn {
   width: 44px;
-  height: 44px;
+  height: 38px;
+  flex-shrink: 0;
   background: transparent;
   border: 1px solid transparent;
-  border-radius: 12px;
+  border-radius: 9px;
   color: #94a3b8;
   display: flex;
   flex-direction: column;
@@ -1810,7 +1811,8 @@ body.editor-page {
 }
 
 .rail-btn span {
-  font-size: 14px;
+  font-size: 13px;
+  line-height: 1;
 }
 
 .rail-btn:hover {
@@ -1841,7 +1843,7 @@ body.editor-page {
   position: absolute;
   right: 12px;
   top: 14px;
-  width: 140px;
+  width: 152px;
   max-height: calc(100% - 28px);
   background: rgba(11, 15, 22, 0.88);
   backdrop-filter: blur(20px);

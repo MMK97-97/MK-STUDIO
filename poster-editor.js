@@ -196,7 +196,7 @@ function fitCss(){
 function hit(x,y){
   for(let i=state.layers.length-1;i>=0;i--){
     const l=state.layers[i];
-    if(l.visible!==false&&x>=l.x&&x<=l.x+l.w&&y>=l.y&&y<=l.y+l.h)return l;
+    if(!l.locked && l.visible!==false && x>=l.x && x<=l.x+l.w && y>=l.y && y<=l.y+l.h) return l;
   }
   return null;
 }
@@ -207,9 +207,13 @@ function pt(e){
 }
 
 function hitHandle(l, px, py) {
-  if (!l || l.locked) return false;
-  const hx = l.x + l.w, hy = l.y + l.h;
-  return Math.hypot(px - hx, py - hy) <= 24;
+  if (!l || l.locked) return null;
+  const rad = 24;
+  if (Math.hypot(px - (l.x + l.w), py - (l.y + l.h)) <= rad) return 'br';
+  if (Math.hypot(px - l.x, py - (l.y + l.h)) <= rad) return 'bl';
+  if (Math.hypot(px - (l.x + l.w), py - l.y) <= rad) return 'tr';
+  if (Math.hypot(px - l.x, py - l.y) <= rad) return 'tl';
+  return null;
 }
 
 let drawMode = false;
@@ -236,9 +240,10 @@ canvas.addEventListener('pointerdown',e=>{
     return;
   }
   const cur=selected();
-  if(cur && hitHandle(cur, p.x, p.y)){
+  const handle=cur ? hitHandle(cur, p.x, p.y) : null;
+  if(cur && handle){
     push();
-    drag={id:cur.id,mode:'resize',sx:p.x,sy:p.y,w:cur.w,h:cur.h};
+    drag={id:cur.id,mode:'resize',handle,sx:p.x,sy:p.y,x:cur.x,y:cur.y,w:cur.w,h:cur.h};
     canvas.setPointerCapture(e.pointerId);
     return;
   }
@@ -262,11 +267,43 @@ canvas.addEventListener('pointermove',e=>{
     render();
     return;
   }
-  if(!drag)return;
+  if(!drag){
+    if(drawMode){
+      canvas.style.cursor='crosshair';
+    }else{
+      const cur=selected();
+      const handle=cur ? hitHandle(cur, p.x, p.y) : null;
+      if(handle==='br'||handle==='tl'){
+        canvas.style.cursor='nwse-resize';
+      }else if(handle==='bl'||handle==='tr'){
+        canvas.style.cursor='nesw-resize';
+      }else if(hit(p.x, p.y)){
+        canvas.style.cursor='move';
+      }else{
+        canvas.style.cursor='default';
+      }
+    }
+    return;
+  }
   const l=selected();if(!l)return;
   if(drag.mode==='resize'){
-    l.w=Math.max(40, Math.round(drag.w+(p.x-drag.sx)));
-    l.h=Math.max(20, Math.round(drag.h+(p.y-drag.sy)));
+    if(drag.handle==='br'){
+      l.w=Math.max(40, Math.round(drag.w+(p.x-drag.sx)));
+      l.h=Math.max(20, Math.round(drag.h+(p.y-drag.sy)));
+    }else if(drag.handle==='bl'){
+      const dw=Math.round(drag.sx-p.x);
+      if(drag.w+dw>=40){l.x=drag.x-dw;l.w=drag.w+dw;}
+      l.h=Math.max(20, Math.round(drag.h+(p.y-drag.sy)));
+    }else if(drag.handle==='tr'){
+      l.w=Math.max(40, Math.round(drag.w+(p.x-drag.sx)));
+      const dh=Math.round(drag.sy-p.y);
+      if(drag.h+dh>=20){l.y=drag.y-dh;l.h=drag.h+dh;}
+    }else if(drag.handle==='tl'){
+      const dw=Math.round(drag.sx-p.x);
+      if(drag.w+dw>=40){l.x=drag.x-dw;l.w=drag.w+dw;}
+      const dh=Math.round(drag.sy-p.y);
+      if(drag.h+dh>=20){l.y=drag.y-dh;l.h=drag.h+dh;}
+    }
   }else{
     const dx = Math.round(p.x-drag.sx);
     const dy = Math.round(p.y-drag.sy);
@@ -301,9 +338,9 @@ canvas.addEventListener('pointerup',()=>{
 });
 
 function renderTemplates(){
-  const q=($('#editorTemplateSearch').value||'').toLowerCase(),list=T.filter(t=>`${t.name} ${t.title} ${t.category}`.toLowerCase().includes(q));
+  const q=($('#editorTemplateSearch').value||'').toLowerCase(),list=T.filter(t=>`${t.name||''} ${t.title||''} ${t.category||''}`.toLowerCase().includes(q));
   $('#editorTemplateCount').textContent=`${list.length} templates`;
-  $('#editorTemplateGrid').innerHTML=list.map(t=>`<button class="template-mini" data-id="${t.id}"><div class="art" style="--a:${t.palette[0]};--b:${t.palette[1]}"><div class="copy">${t.title.replaceAll('\n','<br>')}</div></div><strong>${t.name}</strong></button>`).join('');
+  $('#editorTemplateGrid').innerHTML=list.map(t=>`<button class="template-mini" data-id="${t.id}"><div class="art" style="--a:${t.palette?.[0]||'#0a0e13'};--b:${t.palette?.[1]||'#1e293b'}"><div class="copy">${(t.title||'').replaceAll('\n','<br>')}</div></div><strong>${t.name}</strong></button>`).join('');
 }
 $('#editorTemplateSearch').oninput=renderTemplates;
 $('#editorTemplateGrid').onclick=e=>{
@@ -320,10 +357,11 @@ function renderLayers(){
     const thumb=l.type==='image'?`<img src="${l.src}">`:(l.type==='text'?'T':(l.type==='draw'?'✎':'❖'));
     return `
       <div class="floating-layer-row ${isAct?'active':''}" data-id="${l.id}">
-        <span class="fl-eye" data-act="vis">${l.visible===false?'○':'◉'}</span>
+        <span class="fl-eye" data-act="vis" title="Toggle visibility">${l.visible===false?'○':'◉'}</span>
         <div class="fl-thumb">${thumb}</div>
         <div class="fl-name">${l.name||l.type}</div>
-        <span class="fl-more">⋮</span>
+        <span class="fl-lock" data-act="lock" title="${l.locked?'Unlock':'Lock'}" style="font-size:10px;cursor:pointer;opacity:${l.locked?1:0.35};padding:0 2px">${l.locked?'🔒':'🔓'}</span>
+        <span class="fl-more" title="Edit properties">⋮</span>
       </div>
     `;
   }).join('');
@@ -374,6 +412,26 @@ function renderInspector(){
         </div>
       </section>
     `;
+    const bgInput = box.querySelector('[data-key="bg"]');
+    if(bgInput){
+      bgInput.addEventListener('input', () => {
+        push();
+        state.bg = bgInput.value;
+        render();
+      });
+    }
+    box.querySelectorAll('[data-canvas]').forEach(btn => {
+      btn.onclick = () => {
+        push();
+        const aspect = btn.dataset.canvas;
+        [state.w, state.h] = sizes[aspect] || [1080, 1350];
+        const sizeSelect = $('#canvasSize');
+        if(sizeSelect) sizeSelect.value = aspect;
+        render();
+        renderInspector();
+        toast(`Canvas ratio: ${btn.textContent} (${state.w}×${state.h})`);
+      };
+    });
     return;
   }
   let html=`<section class="inspector-section"><h4>Transform</h4><div class="row2">${ctrl('X',l.x,'x','number')}${ctrl('Y',l.y,'y','number')}</div><div class="row2">${ctrl('Width',l.w,'w','number')}${ctrl('Height',l.h,'h','number')}</div>${ctrl('Rotation',l.rotation||0,'rotation','range',-180,180,1)}${ctrl('Opacity',Math.round((l.opacity??1)*100),'opacity','range',0,100,1)}</section>`;
@@ -452,6 +510,8 @@ $$('.rail-btn').forEach(b=>{
     else if(r==='elements'){ drawMode = false; addShape(); }
     else if(r==='photos'){ drawMode = false; isReplacing = false; $('#imageInput').click(); }
     else if(r==='background'){ drawMode = false; state.selected=null; renderInspector(); openEdit(); }
+    else if(r==='ai'){ drawMode = false; location.href='ai-tools.html'; }
+    else if(r==='brand'){ drawMode = false; location.href='brand.html'; }
     else if(r==='draw'){
       drawMode = !drawMode;
       b.classList.toggle('active', drawMode);
@@ -507,18 +567,28 @@ $('#previewBtn').onclick=()=>{
 // Bottom Tools Row
 $('#toolAdjust').onclick=()=>{
   if(!selected()){state.selected=state.layers[state.layers.length-1]?.id||null}
+  $$('.p-tool-btn').forEach(b=>b.classList.remove('active'));
+  $('#toolAdjust').classList.add('active');
   openEdit();
 };
 $('#toolFilters').onclick=()=>{
   const tray=$('#effectsSubTray');
   if(tray) tray.classList.remove('hidden');
+  $$('.p-tool-btn').forEach(b=>b.classList.remove('active'));
+  $('#toolFilters').classList.add('active');
   switchCategory('color');
 };
 $('#toolEffects').onclick=()=>{
   const tray=$('#effectsSubTray');
   if(tray){
     tray.classList.toggle('hidden');
-    if(!tray.classList.contains('hidden')) switchCategory('effects');
+    if(!tray.classList.contains('hidden')){
+      switchCategory('effects');
+      $$('.p-tool-btn').forEach(b=>b.classList.remove('active'));
+      $('#toolEffects').classList.add('active');
+    }else{
+      $('#toolEffects').classList.remove('active');
+    }
     render();
   }
 };
